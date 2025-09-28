@@ -1,0 +1,42 @@
+# Binaries
+ason
+*.exe
+
+# Test binary
+*.test
+
+# Go files
+*.out
+go.work
+vendor/
+
+# Build
+dist/
+build/
+
+# GoReleaser
+*.tar.gz
+*.zip
+checksums.txt
+checksums_local.txt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test outputs
+test-output/
+tmp/
+coverage.out
+coverage.html
+
+# Task artifacts
+.task/
+
+# Environment
+.env
