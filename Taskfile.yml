@@ -1,0 +1,315 @@
+# Taskfile for Ason project
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  BINARY_NAME: ason
+  BUILD_DIR: dist
+  VERSION:
+    sh: git describe --tags --always --dirty 2>/dev/null || echo "dev"
+  COMMIT:
+    sh: git rev-parse --short HEAD 2>/dev/null || echo "unknown"
+  DATE:
+    sh: date -u +%Y-%m-%dT%H:%M:%SZ
+
+env:
+  GO111MODULE: on
+  CGO_ENABLED: 0
+
+tasks:
+  # Default task
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  # Development tasks
+  dev:build:
+    desc: Build for current platform (development)
+    aliases: [build]
+    cmds:
+      - go build -ldflags="-s -w -X main.version={{.VERSION}} -X main.commit={{.COMMIT}} -X main.date={{.DATE}}" -o {{.BINARY_NAME}} .
+    sources:
+      - "**/*.go"
+      - go.mod
+      - go.sum
+    generates:
+      - "{{.BINARY_NAME}}"
+
+  install:
+    desc: Install the binary to GOPATH/bin
+    deps: [dev:build]
+    vars:
+      GOPATH:
+        sh: go env GOPATH
+      GOOS:
+        sh: go env GOOS
+      GOARCH:
+        sh: go env GOARCH
+    cmds:
+      - |
+        if [ -z "{{.GOPATH}}" ]; then
+          echo "❌ GOPATH not set"
+          exit 1
+        fi
+      - mkdir -p {{.GOPATH}}/bin
+      - cp {{.BINARY_NAME}} {{.GOPATH}}/bin/{{.BINARY_NAME}}
+      - chmod +x {{.GOPATH}}/bin/{{.BINARY_NAME}}
+      - echo "✅ Installed {{.BINARY_NAME}} to {{.GOPATH}}/bin/{{.BINARY_NAME}}"
+      - echo "ℹ️  Make sure {{.GOPATH}}/bin is in your PATH"
+      - |
+        if command -v {{.BINARY_NAME}} &> /dev/null; then
+          echo "✅ {{.BINARY_NAME}} is available in PATH"
+          {{.BINARY_NAME}} --version
+        else
+          echo "⚠️  {{.BINARY_NAME}} not found in PATH"
+          echo "   Add {{.GOPATH}}/bin to your PATH:"
+          echo "   export PATH={{.GOPATH}}/bin:\$PATH"
+        fi
+
+  uninstall:
+    desc: Remove the binary from GOPATH/bin
+    vars:
+      GOPATH:
+        sh: go env GOPATH
+    cmds:
+      - |
+        if [ -z "{{.GOPATH}}" ]; then
+          echo "❌ GOPATH not set"
+          exit 1
+        fi
+      - |
+        if [ -f "{{.GOPATH}}/bin/{{.BINARY_NAME}}" ]; then
+          rm "{{.GOPATH}}/bin/{{.BINARY_NAME}}"
+          echo "✅ Removed {{.BINARY_NAME}} from {{.GOPATH}}/bin"
+        else
+          echo "ℹ️  {{.BINARY_NAME}} not found in {{.GOPATH}}/bin"
+        fi
+
+  dev:run:
+    desc: Run the application
+    aliases: [run]
+    deps: [dev:build]
+    cmds:
+      - ./{{.BINARY_NAME}} {{.CLI_ARGS}}
+
+  dev:clean:
+    desc: Clean build artifacts
+    aliases: [clean]
+    cmds:
+      - rm -f {{.BINARY_NAME}}
+      - rm -rf {{.BUILD_DIR}}
+      - go clean
+
+  # Testing tasks
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
+
+  test:verbose:
+    desc: Run tests with verbose output
+    aliases: [test:v]
+    cmds:
+      - go test -v ./...
+
+  test:coverage:
+    desc: Run tests with coverage
+    aliases: [test:cov]
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out -o coverage.html
+      - echo "Coverage report{{":"}} coverage.html"
+
+  test:race:
+    desc: Run tests with race detection
+    cmds:
+      - go test -race ./...
+
+  # Code quality tasks
+  lint:
+    desc: Run linters
+    cmds:
+      - go fmt ./...
+      - go vet ./...
+
+  deps:
+    desc: Download and tidy dependencies
+    cmds:
+      - go mod download
+      - go mod tidy
+
+  # GoReleaser tasks
+  release:check:
+    desc: Check if goreleaser is installed
+    cmds:
+      - |
+        if ! command -v goreleaser &> /dev/null; then
+          echo "❌ GoReleaser not found"
+          echo "Install with: go install github.com/goreleaser/goreleaser@latest"
+          exit 1
+        fi
+        echo "✅ GoReleaser found"
+
+  release:local:
+    desc: Build release binaries locally (no publish)
+    aliases: [build:all]
+    deps: [release:check]
+    cmds:
+      - goreleaser build --config .goreleaser.local.yaml --snapshot --clean
+      - echo "✅ Local builds completed in {{.BUILD_DIR}}"
+
+  release:snapshot:
+    desc: Create a snapshot release (local, all platforms)
+    deps: [release:check]
+    cmds:
+      - goreleaser release --config .goreleaser.local.yaml --snapshot --clean --skip=publish
+      - echo "✅ Snapshot release completed in {{.BUILD_DIR}}"
+
+  release:test:
+    desc: Test release process (dry run)
+    aliases: [release:dry]
+    deps: [release:check]
+    cmds:
+      - goreleaser release --clean --skip=publish
+      - echo "✅ Release test completed"
+
+  release:publish:
+    desc: Create and publish a real release
+    deps: [release:check]
+    cmds:
+      - |
+        if [ -z "${GITHUB_TOKEN}" ]; then
+          echo "❌ GITHUB_TOKEN environment variable not set"
+          exit 1
+        fi
+      - |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "❌ Working directory is not clean"
+          exit 1
+        fi
+      - goreleaser release --clean
+      - echo "✅ Release published successfully"
+
+  # Docker tasks
+  docker:build:
+    desc: Build Docker image locally
+    cmds:
+      - docker build -f Dockerfile.goreleaser -t ason:local .
+
+  docker:run:
+    desc: Run Docker container
+    deps: [docker:build]
+    cmds:
+      - docker run --rm -v $(pwd):/workspace ason:local {{.CLI_ARGS}}
+
+  # Completion tasks
+  completion:install:
+    desc: Install shell completion
+    deps: [dev:build]
+    cmds:
+      - ./scripts/install-completion.sh
+
+  completion:test:
+    desc: Test completion generation
+    deps: [dev:build]
+    cmds:
+      - ./{{.BINARY_NAME}} completion bash > /tmp/ason_completion_bash.sh
+      - ./{{.BINARY_NAME}} completion zsh > /tmp/ason_completion_zsh.sh
+      - ./{{.BINARY_NAME}} completion fish > /tmp/ason_completion_fish.fish
+      - echo "✅ Completion scripts generated in /tmp/"
+
+  # Git and versioning tasks
+  git:tag:
+    desc: Create and push a git tag
+    vars:
+      TAG: '{{.TAG | default ""}}'
+    cmds:
+      - |
+        if [ -z "{{.TAG}}" ]; then
+          echo "❌ Please provide a tag: task git:tag TAG=v1.0.0"
+          exit 1
+        fi
+      - |
+        if git tag --list | grep -q "^{{.TAG}}$"; then
+          echo "❌ Tag {{.TAG}} already exists"
+          exit 1
+        fi
+      - git tag -a {{.TAG}} -m "Release {{.TAG}}"
+      - git push origin {{.TAG}}
+      - echo "✅ Tag {{.TAG}} created and pushed"
+
+  git:status:
+    desc: Show git status and version info
+    cmds:
+      - echo "Version{{":"}} {{.VERSION}}"
+      - echo "Commit{{":"}}  {{.COMMIT}}"
+      - echo "Date{{":"}}    {{.DATE}}"
+      - echo
+      - git status --short
+
+  # CI/CD helper tasks
+  ci:test:
+    desc: Run full test suite for CI
+    cmds:
+      - task: lint
+      - task: test:race
+      - task: test:coverage
+
+  ci:build:
+    desc: Build for CI (all platforms)
+    cmds:
+      - task: release:snapshot
+
+  # Development workflow
+  dev:
+    desc: Development mode (build and run)
+    deps: [dev:build]
+    cmds:
+      - ./{{.BINARY_NAME}} {{.CLI_ARGS}}
+
+  dev:watch:
+    desc: Watch for changes and rebuild
+    deps: [dev:build]
+    cmds:
+      - |
+        echo "👀 Watching for changes..."
+        while true; do
+          find . -name "*.go" -newer {{.BINARY_NAME}} | grep -q . && {
+            echo "🔄 Rebuilding..."
+            task dev:build
+          }
+          sleep 1
+        done
+
+  # Help and info
+  info:
+    desc: Show project information
+    cmds:
+      - echo "※ Ason - The Sacred Rattle of Code Generation"
+      - echo
+      - echo "Version{{":"}} {{.VERSION}}"
+      - echo "Commit{{":"}}  {{.COMMIT}}"
+      - echo "Date{{":"}}    {{.DATE}}"
+      - echo "Binary{{":"}}  {{.BINARY_NAME}}"
+      - echo
+      - echo "Build environment{{":"}}"
+      - echo "  GO111MODULE{{":"}} {{.GO111MODULE}}"
+      - echo "  CGO_ENABLED{{":"}} {{.CGO_ENABLED}}"
+      - go version
+
+  # Maintenance tasks
+  update:deps:
+    desc: Update all dependencies
+    cmds:
+      - go get -u ./...
+      - go mod tidy
+
+  setup:
+    desc: Setup development environment
+    cmds:
+      - task: deps
+      - task: install
+      - task: completion:install
+      - echo "✅ Development environment setup complete"
