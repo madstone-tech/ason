@@ -37,6 +37,11 @@ coverage.html
 
 # Task artifacts
 .task/
+# LLM chatbot helpers
+CLAUDE.md
+AGENT.md
+CRUSH.md
+GEMINI.md
 
 # Environment
 .env

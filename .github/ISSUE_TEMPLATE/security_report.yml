@@ -1,0 +1,130 @@
+name: 🔒 Security Report
+description: Report a security vulnerability (use for non-critical issues only)
+title: "[Security]: "
+labels: ["security", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **Important Security Notice** ⚠️
+
+        **For critical security vulnerabilities, please DO NOT create a public issue.**
+        Instead, please report them privately by emailing security@madstone.tech
+
+        This template is for non-critical security improvements and general security discussions only.
+
+  - type: checkboxes
+    id: severity
+    attributes:
+      label: Severity Assessment
+      description: Please confirm this is not a critical security issue
+      options:
+        - label: This is NOT a critical vulnerability that could compromise user data or systems
+          required: true
+        - label: This is a security improvement, hardening suggestion, or minor security concern
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Security Concern Description
+      description: Describe the security improvement or concern
+      placeholder: |
+        What security aspect could be improved?
+        What are the potential implications?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Security Category
+      description: What type of security improvement is this?
+      options:
+        - Input validation
+        - Access control
+        - Data protection
+        - Code hardening
+        - Dependency security
+        - Configuration security
+        - Documentation/guidance
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: Current Behavior
+      description: How does the current implementation work?
+      placeholder: Describe current security-related behavior...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested_improvement
+    attributes:
+      label: Suggested Improvement
+      description: What security improvement do you suggest?
+      placeholder: |
+        Suggested changes:
+        - Add validation for X
+        - Implement security control Y
+        - Update configuration Z
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Security Impact
+      description: What would be the security benefit of this improvement?
+      placeholder: |
+        This improvement would:
+        - Prevent X type of issues
+        - Reduce risk of Y
+        - Improve overall security posture by Z
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Suggestions
+      description: Do you have suggestions for how to implement this security improvement?
+      placeholder: |
+        Potential implementation approaches:
+        1. Option A: [description]
+        2. Option B: [description]
+
+  - type: checkboxes
+    id: standards
+    attributes:
+      label: Security Standards
+      description: Does this relate to any security standards or best practices?
+      options:
+        - label: OWASP guidelines
+        - label: CWE (Common Weakness Enumeration)
+        - label: Industry best practices
+        - label: Language-specific security guidelines
+        - label: Other security framework
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any additional information about this security improvement
+      placeholder: |
+        - References to security guidelines
+        - Examples from other projects
+        - Related security tools or checks
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I confirm this is NOT a critical security vulnerability
+          required: true
+        - label: I have not included sensitive information in this public report
+          required: true
+        - label: I have searched for similar security improvement suggestions
+          required: true

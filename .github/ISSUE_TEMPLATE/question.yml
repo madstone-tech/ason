@@ -1,0 +1,106 @@
+name: ❓ Question
+description: Ask a question about using Ason
+title: "[Question]: "
+labels: ["question", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your question! Please provide as much context as possible to help us give you the best answer.
+
+        💡 **Before asking**: Please check the [documentation](https://github.com/madstone-tech/ason#readme) and search existing issues to see if your question has already been answered.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What type of question is this?
+      options:
+        - Installation and setup
+        - Template creation
+        - CLI usage
+        - Configuration
+        - Best practices
+        - Troubleshooting
+        - Integration with other tools
+        - Contributing to Ason
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: Please be as specific as possible...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and Background
+      description: What are you trying to accomplish? What have you tried so far?
+      placeholder: |
+        I'm trying to [goal]...
+        I've attempted [what you've tried]...
+        I'm having trouble with [specific issue]...
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (if relevant)
+      description: Your system information
+      value: |
+        - OS: [e.g., macOS 13.0, Ubuntu 22.04, Windows 11]
+        - Ason Version: [e.g., v1.2.3]
+        - Go Version: [e.g., go1.21.0]
+      placeholder: Remove this section if not relevant to your question
+
+  - type: textarea
+    id: code_examples
+    attributes:
+      label: Code/Commands (if applicable)
+      description: Show what you're trying to do or what's not working
+      render: shell
+      placeholder: |
+        # What you're trying to run
+        ason new my-template output-dir
+
+        # Configuration you're using
+        # Template structure
+        # Error messages
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Outcome
+      description: What did you expect to happen or what are you trying to achieve?
+      placeholder: I expected [description]...
+
+  - type: checkboxes
+    id: research
+    attributes:
+      label: Research Done
+      description: Please confirm you've done some research first
+      options:
+        - label: I have read the README and documentation
+          required: true
+        - label: I have searched existing issues for similar questions
+          required: true
+        - label: I have tried to solve this myself
+          required: true
+
+  - type: checkboxes
+    id: help
+    attributes:
+      label: How can we help?
+      description: What kind of help would be most useful?
+      options:
+        - label: Explanation of how something works
+        - label: Example code or configuration
+        - label: Best practices guidance
+        - label: Troubleshooting steps
+        - label: Documentation improvement suggestions
+        - label: Other
