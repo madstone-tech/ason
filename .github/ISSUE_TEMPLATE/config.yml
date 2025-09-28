@@ -1,0 +1,12 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Critical Security Vulnerability
+    url: mailto:security@madstone.io
+    about: Please report critical security vulnerabilities privately via email
+  - name: 📚 Documentation
+    url: https://github.com/madstone-tech/ason#readme
+    about: Read the documentation and guides
+  - name: 📋 Project Roadmap
+    url: https://github.com/madstone-tech/ason/milestones
+    about: View the project roadmap and upcoming features
+
