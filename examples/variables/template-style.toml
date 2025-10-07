@@ -1,0 +1,9 @@
+# Template-style variable file with defaults
+# This format is compatible with ason.toml template configuration
+# Usage: ason new template ./output --var-file template-style.toml
+
+[variables]
+organization = { type = "string", description = "Organization name", default = "acme" }
+project_name = { type = "string", description = "Name of the project", default = "my-app" }
+aws_region = { type = "string", description = "AWS region for deployment", default = "us-east-1" }
+environment = { type = "string", description = "Environment (dev/staging/prod)", default = "dev" }

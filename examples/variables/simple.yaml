@@ -1,0 +1,7 @@
+# YAML variable file example
+# Usage: ason new template ./output --var-file simple.yaml
+
+environment: production
+aws_region: us-west-2
+organization: acme
+project_name: my-app

@@ -58,6 +58,12 @@ universal_binaries:
     replace: true
     name_template: ason
 
+# Hooks to generate completions before archiving
+before:
+  hooks:
+    - go mod tidy
+    - ./scripts/generate-completions.sh
+
 # Archives configuration
 archives:
   - id: default
@@ -77,6 +83,7 @@ archives:
       - LICENSE*
       - CHANGELOG*
       - scripts/install-completion.sh
+      - completions/*
 
 # Checksum
 checksum:
@@ -176,7 +183,8 @@ brews:
   - repository:
       owner: madstone-tech
       name: homebrew-tap
-    folder: Formula
+      token: "{{ .Env.GITHUB_TOKEN }}"
+    directory: Formula
     homepage: https://github.com/madstone-tech/ason
     description: "※ The sacred rattle that transforms templates into living projects"
     license: MIT
@@ -184,7 +192,11 @@ brews:
       system "#{bin}/ason --version"
     install: |
       bin.install "ason"
-      bash_completion.install "scripts/install-completion.sh"
+
+      # Generate and install shell completions
+      bash_completion.install "completions/ason.bash" => "ason" if File.exist?("completions/ason.bash")
+      zsh_completion.install "completions/_ason" if File.exist?("completions/_ason")
+      fish_completion.install "completions/ason.fish" if File.exist?("completions/ason.fish")
 
 # Docker images
 dockers:
@@ -210,7 +222,7 @@ nfpms:
     file_name_template: "{{ .ConventionalFileName }}"
     vendor: Madstone Tech
     homepage: https://github.com/madstone-tech/ason
-    maintainer: Madstone Tech <contact@madstone.tech>
+    maintainer: Madstone Tech <contact@madstone.io>
     description: ※ The sacred rattle that transforms templates into living projects
     license: MIT
     formats:
