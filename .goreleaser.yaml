@@ -144,15 +144,17 @@ release:
     ### Installation
 
     ```bash
-    # Download and install
-    curl -sL https://github.com/madstone-tech/ason/releases/download/{{ .Tag }}/ason_{{ title .Os }}_{{ if eq .Arch "amd64" }}x86_64{{ else }}{{ .Arch }}{{ end }}.tar.gz | tar xz
+    # Download the binary for your platform from the assets below
+    # Extract and install
+    tar -xzf ason_*.tar.gz
     sudo mv ason /usr/local/bin/
 
     # Or using Go
     go install github.com/madstone-tech/ason@{{ .Tag }}
 
-    # Setup autocompletion
-    ./install-completion.sh
+    # Or using Homebrew
+    brew tap madstone-tech/tap
+    brew install ason
     ```
 
     ### Verification
