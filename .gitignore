@@ -19,6 +19,7 @@ build/
 *.zip
 checksums.txt
 checksums_local.txt
+completions/
 
 # IDE
 .idea/
