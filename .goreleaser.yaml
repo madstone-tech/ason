@@ -62,10 +62,7 @@ universal_binaries:
 before:
   hooks:
     - go mod tidy
-    - mkdir -p completions
-    - go run . completion bash > completions/ason.bash
-    - go run . completion zsh > completions/_ason
-    - go run . completion fish > completions/ason.fish
+    - ./scripts/generate-completions.sh
 
 # Archives configuration
 archives:
@@ -186,7 +183,8 @@ brews:
   - repository:
       owner: madstone-tech
       name: homebrew-tap
-    folder: Formula
+      token: "{{ .Env.GITHUB_TOKEN }}"
+    directory: Formula
     homepage: https://github.com/madstone-tech/ason
     description: "※ The sacred rattle that transforms templates into living projects"
     license: MIT
