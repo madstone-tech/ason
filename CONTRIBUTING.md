@@ -155,7 +155,7 @@ go build -o ason .
 
 **For Security Issues:**
 
-- **Critical vulnerabilities**: Email <security@madstone.tech> privately
+- **Critical vulnerabilities**: Email <security@madstone.io> privately
 - **Minor security improvements**: Create a security issue
 
 ### 2. Development Workflow

@@ -1,0 +1,6 @@
+{
+  "environment": "production",
+  "aws_region": "us-west-2",
+  "organization": "acme",
+  "project_name": "my-app"
+}
