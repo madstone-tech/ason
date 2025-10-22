@@ -32,25 +32,6 @@ curl -sL https://github.com/madstone-tech/ason/releases/latest/download/ason_Lin
 sudo mv ason /usr/local/bin/
 ```
 
-#### Package Managers
-```bash
-# Debian/Ubuntu (.deb)
-wget https://github.com/madstone-tech/ason/releases/latest/download/ason_<version>_linux_amd64.deb
-sudo dpkg -i ason_<version>_linux_amd64.deb
-
-# RedHat/CentOS (.rpm)
-wget https://github.com/madstone-tech/ason/releases/latest/download/ason_<version>_linux_amd64.rpm
-sudo rpm -i ason_<version>_linux_amd64.rpm
-
-# Alpine (.apk)
-wget https://github.com/madstone-tech/ason/releases/latest/download/ason_<version>_linux_amd64.apk
-sudo apk add --allow-untrusted ason_<version>_linux_amd64.apk
-
-# Arch Linux (.pkg.tar.zst)
-wget https://github.com/madstone-tech/ason/releases/latest/download/ason_<version>_linux_amd64.pkg.tar.zst
-sudo pacman -U ason_<version>_linux_amd64.pkg.tar.zst
-```
-
 ### Windows
 
 Download the latest `.zip` from [releases](https://github.com/madstone-tech/ason/releases/latest), extract, and add to your PATH.
@@ -59,15 +40,6 @@ Download the latest `.zip` from [releases](https://github.com/madstone-tech/ason
 
 ```bash
 go install github.com/madstone-tech/ason@latest
-```
-
-### Docker
-
-```bash
-docker pull ghcr.io/madstone-tech/ason:latest
-
-# Run
-docker run --rm -v $(pwd):/workspace ghcr.io/madstone-tech/ason:latest --help
 ```
 
 ## Quick Start
@@ -228,14 +200,11 @@ task release:publish
 
 ### Release Artifacts
 
-The release process automatically creates packages for:
-- **Homebrew** (macOS)
-- **APK** (Alpine Linux)
-- **DEB** (Debian/Ubuntu)
-- **RPM** (RedHat/CentOS)
-- **Arch Linux** packages
-- **Docker** images
+The release process automatically creates:
+- **Homebrew formula** (macOS)
 - **Universal binaries** for macOS (Intel + Apple Silicon)
+- **Binary archives** for Linux (amd64, arm64) and Windows
+- **Source code** archives
 
 ## About the Name
 

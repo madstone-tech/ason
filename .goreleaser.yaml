@@ -23,21 +23,12 @@ builds:
     main: .
     goos:
       - linux
-      - windows
       - darwin
+      - windows
     goarch:
       - amd64
       - arm64
-      - arm
-    goarm:
-      - "6"
-      - "7"
     ignore:
-      # Skip 32-bit builds except for ARM
-      - goos: darwin
-        goarch: arm
-      - goos: windows
-        goarch: arm
       - goos: windows
         goarch: arm64
     # Build flags
@@ -199,45 +190,6 @@ brews:
       bash_completion.install "completions/ason.bash" => "ason" if File.exist?("completions/ason.bash")
       zsh_completion.install "completions/_ason" if File.exist?("completions/_ason")
       fish_completion.install "completions/ason.fish" if File.exist?("completions/ason.fish")
-
-# Docker images
-dockers:
-  - image_templates:
-      - "ghcr.io/madstone-tech/ason:{{ .Tag }}"
-      - "ghcr.io/madstone-tech/ason:latest"
-    dockerfile: Dockerfile.goreleaser
-    build_flag_templates:
-      - "--pull"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.title={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-      - "--label=org.opencontainers.image.source=https://github.com/madstone-tech/ason"
-    use: buildx
-    goos: linux
-    goarch: amd64
-
-# Package managers for Linux
-nfpms:
-  - id: ason
-    package_name: ason
-    file_name_template: "{{ .ConventionalFileName }}"
-    vendor: Madstone Tech
-    homepage: https://github.com/madstone-tech/ason
-    maintainer: Madstone Tech <contact@madstone.io>
-    description: ※ The sacred rattle that transforms templates into living projects
-    license: MIT
-    formats:
-      - apk
-      - deb
-      - rpm
-      - archlinux
-    bindir: /usr/bin
-    contents:
-      - src: scripts/install-completion.sh
-        dst: /usr/share/ason/install-completion.sh
-        file_info:
-          mode: 0755
 
 # Announce releases
 announce:
