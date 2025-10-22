@@ -4,41 +4,89 @@
 
 A powerful, lightweight project scaffolding tool that catalyzes the transformation of templates into fully-formed projects. Built with Go's simplicity and minimal dependencies.
 
-## Quick Start
+## Installation
 
-### Using Pre-built Binaries
+### macOS (Homebrew - Recommended)
+
 ```bash
-# Download latest release
+# Add the tap and install
+brew tap madstone-tech/tap
+brew install ason
+
+# Verify installation
+ason --version
+```
+
+Shell completions are automatically installed with Homebrew.
+
+### Linux
+
+#### Download Binary (All distributions)
+```bash
+# AMD64
 curl -sL https://github.com/madstone-tech/ason/releases/latest/download/ason_Linux_x86_64.tar.gz | tar xz
 sudo mv ason /usr/local/bin/
 
-# Or install with Go
+# ARM64
+curl -sL https://github.com/madstone-tech/ason/releases/latest/download/ason_Linux_arm64.tar.gz | tar xz
+sudo mv ason /usr/local/bin/
+```
+
+#### Package Managers
+```bash
+# Debian/Ubuntu (.deb)
+wget https://github.com/madstone-tech/ason/releases/latest/download/ason_<version>_linux_amd64.deb
+sudo dpkg -i ason_<version>_linux_amd64.deb
+
+# RedHat/CentOS (.rpm)
+wget https://github.com/madstone-tech/ason/releases/latest/download/ason_<version>_linux_amd64.rpm
+sudo rpm -i ason_<version>_linux_amd64.rpm
+
+# Alpine (.apk)
+wget https://github.com/madstone-tech/ason/releases/latest/download/ason_<version>_linux_amd64.apk
+sudo apk add --allow-untrusted ason_<version>_linux_amd64.apk
+
+# Arch Linux (.pkg.tar.zst)
+wget https://github.com/madstone-tech/ason/releases/latest/download/ason_<version>_linux_amd64.pkg.tar.zst
+sudo pacman -U ason_<version>_linux_amd64.pkg.tar.zst
+```
+
+### Windows
+
+Download the latest `.zip` from [releases](https://github.com/madstone-tech/ason/releases/latest), extract, and add to your PATH.
+
+### Using Go
+
+```bash
 go install github.com/madstone-tech/ason@latest
 ```
 
-### Development Setup
+### Docker
+
 ```bash
-# Clone and build
-git clone https://github.com/madstone-tech/ason.git
-cd ason
+docker pull ghcr.io/madstone-tech/ason:latest
 
-# Using Taskfile (recommended)
-task setup           # Setup development environment
-task build           # Build the binary
-task                 # Show all available tasks
-
-# Or using traditional tools
-go mod tidy
-go build -o ason .
+# Run
+docker run --rm -v $(pwd):/workspace ghcr.io/madstone-tech/ason:latest --help
 ```
 
-### Basic Usage
-```bash
-# Run the CLI
-./ason --help
+## Quick Start
 
-# Create a project
-./ason new ./my-template my-project
+```bash
+# View available commands
+ason --help
+
+# Register a template
+ason register my-template ./path/to/template
+
+# List registered templates
+ason list
+
+# Create a project from a template
+ason new my-template my-project
+
+# Or use a local template directly
+ason new ./path/to/template my-project
 ```
 
 ## Features
@@ -178,15 +226,16 @@ export GITHUB_TOKEN=your_token_here
 task release:publish
 ```
 
-### Package Managers
+### Release Artifacts
 
 The release process automatically creates packages for:
-- **Homebrew** (macOS): `brew install madstone-tech/tap/ason`
+- **Homebrew** (macOS)
 - **APK** (Alpine Linux)
 - **DEB** (Debian/Ubuntu)
 - **RPM** (RedHat/CentOS)
-- **AUR** (Arch Linux)
-- **Docker**: `docker pull ghcr.io/madstone-tech/ason:latest`
+- **Arch Linux** packages
+- **Docker** images
+- **Universal binaries** for macOS (Intel + Apple Silicon)
 
 ## About the Name
 

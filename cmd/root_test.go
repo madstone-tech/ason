@@ -48,7 +48,7 @@ func TestRootCmdHasSubcommands(t *testing.T) {
 	// Test that subcommands are added
 	commands := rootCmd.Commands()
 
-	expectedCommands := []string{"new", "list", "add", "remove", "validate"}
+	expectedCommands := []string{"new", "list", "register", "remove", "validate"}
 	commandNames := make([]string, len(commands))
 
 	for i, cmd := range commands {

@@ -148,7 +148,7 @@ Added: 2 weeks ago
 ✨ Template 'react-app' removed successfully!
 
 💡 Backup available at: ~/.ason/backups/react-app-2023-12-01-143022.tar.gz
-💡 Restore with: ason add react-app ~/.ason/backups/react-app-2023-12-01-143022.tar.gz
+💡 Restore with: ason register react-app ~/.ason/backups/react-app-2023-12-01-143022.tar.gz
 ```
 
 ## Error Handling
@@ -239,7 +239,7 @@ Backups are stored in:
 # Extract and re-add from backup
 cd /tmp
 tar -xzf ~/.ason/backups/react-app-2023-12-01-143022.tar.gz
-ason add react-app ./react-app
+ason register react-app ./react-app
 
 # Direct restore (future feature)
 ason restore ~/.ason/backups/react-app-2023-12-01-143022.tar.gz
@@ -301,13 +301,13 @@ done
 ```bash
 # Remove old version before adding new
 ason remove react-app --backup
-ason add react-app ./new-react-template
+ason register react-app ./new-react-template
 
 # Batch upgrade
 templates=("react-app" "vue-app" "angular-app")
 for template in "${templates[@]}"; do
   ason remove "$template" --backup
-  ason add "$template" "./new-templates/$template"
+  ason register "$template" "./new-templates/$template"
 done
 ```
 
@@ -444,7 +444,7 @@ done
 ## Related Commands
 
 - [`ason list`](list.md) - List available templates
-- [`ason add`](add.md) - Add templates to registry
+- [`ason register`](add.md) - Add templates to registry
 - [`ason validate`](validate.md) - Validate template configuration
 - [`ason new`](new.md) - Create projects from templates
 

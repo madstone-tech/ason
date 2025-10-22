@@ -22,12 +22,12 @@ var (
 	listSort    string
 	listReverse bool
 
-	// Add command flags
-	addDescription string
-	addType        string
-	addForce       bool
-	addValidate    bool
-	addDryRun      bool
+	// Register command flags
+	registerDescription string
+	registerType        string
+	registerForce       bool
+	registerValidate    bool
+	registerDryRun      bool
 
 	// Remove command flags
 	removeForce     bool
@@ -57,11 +57,11 @@ func init() {
 	listCmd.Flags().StringVar(&listSort, "sort", "name", "Sort by field (name, date, size, type)")
 	listCmd.Flags().BoolVar(&listReverse, "reverse", false, "Reverse sort order")
 
-	addCmd.Flags().StringVar(&addDescription, "description", "", "Template description")
-	addCmd.Flags().StringVar(&addType, "type", "", "Template type")
-	addCmd.Flags().BoolVar(&addForce, "force", false, "Overwrite existing template")
-	addCmd.Flags().BoolVar(&addValidate, "validate", false, "Validate template before adding")
-	addCmd.Flags().BoolVar(&addDryRun, "dry-run", false, "Show what would be added")
+	registerCmd.Flags().StringVar(&registerDescription, "description", "", "Template description")
+	registerCmd.Flags().StringVar(&registerType, "type", "", "Template type")
+	registerCmd.Flags().BoolVar(&registerForce, "force", false, "Overwrite existing template")
+	registerCmd.Flags().BoolVar(&registerValidate, "validate", false, "Validate template before registering")
+	registerCmd.Flags().BoolVar(&registerDryRun, "dry-run", false, "Show what would be registered")
 
 	removeCmd.Flags().BoolVar(&removeForce, "force", false, "Remove without confirmation")
 	removeCmd.Flags().BoolVar(&removeDryRun, "dry-run", false, "Show what would be removed")
@@ -108,7 +108,7 @@ func runList(cmd *cobra.Command, args []string) error {
 		fmt.Println("No templates ready for invocation.")
 		fmt.Println()
 		fmt.Println("💡 Prepare templates for transformation:")
-		fmt.Println("   ason add my-template /path/to/template")
+		fmt.Println("   ason register my-template /path/to/template")
 		return nil
 	}
 
@@ -122,15 +122,17 @@ func runList(cmd *cobra.Command, args []string) error {
 	}
 }
 
-// addCmd adds a template to the registry
-var addCmd = &cobra.Command{
-	Use:   "add [name] [path]",
-	Short: "Add a template to the registry",
-	Args:  cobra.ExactArgs(2),
-	RunE:  runAdd,
+// registerCmd registers a template in the registry.
+// The "add" alias is maintained for backward compatibility with existing scripts and workflows.
+var registerCmd = &cobra.Command{
+	Use:     "register [name] [path]",
+	Aliases: []string{"add"}, // Backward compatibility: "ason add" still works
+	Short:   "Register a template in the registry",
+	Args:    cobra.ExactArgs(2),
+	RunE:    runRegister,
 }
 
-func runAdd(cmd *cobra.Command, args []string) error {
+func runRegister(cmd *cobra.Command, args []string) error {
 	name := args[0]
 	sourcePath := args[1]
 
@@ -151,19 +153,19 @@ func runAdd(cmd *cobra.Command, args []string) error {
 
 	fmt.Println("※ The ason prepares to embrace new wisdom...")
 
-	if addDryRun {
+	if registerDryRun {
 		fmt.Println("[DRY RUN] Would analyze:", sourcePath)
 		fmt.Println("[DRY RUN] Would validate template structure")
 		fmt.Printf("[DRY RUN] Would copy to: ~/.ason/templates/%s\n", name)
 		fmt.Printf("[DRY RUN] Would register as: %s\n", name)
-		fmt.Println("🔮 [DRY RUN] Template ready for addition. Use without --dry-run to add.")
+		fmt.Println("🔮 [DRY RUN] Template ready for registration. Use without --dry-run to register.")
 		return nil
 	}
 
 	fmt.Println("✨ Analyzing template:", sourcePath)
 
 	// Validate template if requested
-	if addValidate {
+	if registerValidate {
 		fmt.Println("📿 Validating template structure...")
 		if err := validateTemplate(sourcePath); err != nil {
 			return fmt.Errorf("template validation failed: %w", err)
@@ -178,7 +180,7 @@ func runAdd(cmd *cobra.Command, args []string) error {
 
 	// Check if template exists and handle force flag
 	if _, err := reg.Get(name); err == nil {
-		if !addForce {
+		if !registerForce {
 			return fmt.Errorf("template '%s' already exists. Use --force to overwrite", name)
 		}
 		// Force flag is enabled, remove existing template first
@@ -190,8 +192,8 @@ func runAdd(cmd *cobra.Command, args []string) error {
 
 	fmt.Println("🎭 Copying template to registry...")
 
-	// Add template to registry
-	if err := reg.Add(name, sourcePath, addDescription, addType); err != nil {
+	// Register template in registry
+	if err := reg.Add(name, sourcePath, registerDescription, registerType); err != nil {
 		return fmt.Errorf("failed to add template: %w", err)
 	}
 
@@ -390,7 +392,7 @@ func printTemplatesTable(templates []registry.TemplateEntry) error {
 	w.Flush()
 	fmt.Println()
 	fmt.Println("💡 Use 'ason new TEMPLATE OUTPUT_DIR' to create a project")
-	fmt.Println("💡 Use 'ason add' to prepare more templates for invocation")
+	fmt.Println("💡 Use 'ason register' to prepare more templates for invocation")
 
 	return nil
 }

@@ -144,8 +144,8 @@ func completeVariableKeys(cmd *cobra.Command, args []string, toComplete string) 
 	return completions, cobra.ShellCompDirectiveNoSpace | cobra.ShellCompDirectiveNoFileComp
 }
 
-// completeAddCommand provides completion for the add command
-func completeAddCommand(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+// completeRegisterCommand provides completion for the register command
+func completeRegisterCommand(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	// First argument is template name (no completion needed, it's user-defined)
 	if len(args) == 0 {
 		return nil, cobra.ShellCompDirectiveNoFileComp
@@ -164,8 +164,8 @@ func setupCompletions() {
 	// Set up completion for the new command
 	newCmd.ValidArgsFunction = completeTemplateNamesOrPaths
 
-	// Set up completion for the add command
-	addCmd.ValidArgsFunction = completeAddCommand
+	// Set up completion for the register command
+	registerCmd.ValidArgsFunction = completeRegisterCommand
 
 	// Set up completion for remove command
 	removeCmd.ValidArgsFunction = completeTemplateNames

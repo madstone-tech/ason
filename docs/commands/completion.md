@@ -248,7 +248,7 @@ Smart file and directory path completion:
 ason new my-template <TAB>
 # Shows directories for output path
 
-ason add my-template <TAB>
+ason register my-template <TAB>
 # Shows directories for template source path
 
 ason validate <TAB>
@@ -426,7 +426,7 @@ ason new react-app <TAB>          # Select output directory
 ason new react-app my-app --var <TAB>  # Set variables
 
 # Template management with completion
-ason add <TAB>                    # Add new template
+ason register <TAB>                    # Add new template
 ason remove <TAB>                 # Remove old template
 ason validate <TAB>               # Validate specific template
 ```
@@ -492,7 +492,7 @@ For editors that support shell completion:
 
 - [`ason new`](new.md) - Create projects (enhanced with completion)
 - [`ason list`](list.md) - List templates (used by completion)
-- [`ason add`](add.md) - Add templates (enhanced with completion)
+- [`ason register`](add.md) - Add templates (enhanced with completion)
 - [`ason remove`](remove.md) - Remove templates (enhanced with completion)
 - [`ason validate`](validate.md) - Validate templates (enhanced with completion)
 

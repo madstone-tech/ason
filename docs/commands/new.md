@@ -282,7 +282,7 @@ ason new api-docs user-api-docs \
 ## Related Commands
 
 - [`ason list`](list.md) - List available templates
-- [`ason add`](add.md) - Add templates to registry
+- [`ason register`](add.md) - Add templates to registry
 - [`ason validate`](validate.md) - Validate template configuration
 
 ## See Also

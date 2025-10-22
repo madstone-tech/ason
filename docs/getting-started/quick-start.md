@@ -41,7 +41,7 @@ If this is your first time, you'll see:
 No templates ready for invocation.
 
 💡 Prepare templates for transformation:
-   ason add my-template /path/to/template
+   ason register my-template /path/to/template
 ```
 
 This is expected! Let's create your first template.
@@ -116,7 +116,7 @@ Now let's add this template to your Ason registry:
 
 ```bash
 # Add the template to your registry
-ason add my-first-template ./my-first-template \
+ason register my-first-template ./my-first-template \
   --description "My first Ason template for learning"
 
 # Verify it was added
@@ -286,7 +286,7 @@ npm install
 EOF
 
 # Add to registry
-ason add web-app ./web-app-template --type web --description "Modern web application template"
+ason register web-app ./web-app-template --type web --description "Modern web application template"
 ```
 
 ### Go Service Template
@@ -355,7 +355,7 @@ The service will be available at: http://localhost:{{ port | default:"8080" }}
 EOF
 
 # Add to registry
-ason add go-service ./go-service-template --type backend --description "Go HTTP service template"
+ason register go-service ./go-service-template --type backend --description "Go HTTP service template"
 ```
 
 ### Test the New Templates
@@ -395,10 +395,10 @@ project_name, service_name, database_type
 ### 2. Template Organization
 ```bash
 # Organize templates by type
-ason add react-app ./templates/web/react --type web
-ason add vue-app ./templates/web/vue --type web
-ason add go-api ./templates/backend/go --type backend
-ason add python-api ./templates/backend/python --type backend
+ason register react-app ./templates/web/react --type web
+ason register vue-app ./templates/web/vue --type web
+ason register go-api ./templates/backend/go --type backend
+ason register python-api ./templates/backend/python --type backend
 ```
 
 ### 3. Using Filters
@@ -446,7 +446,7 @@ Now that you've mastered the basics, explore these advanced topics:
 ```bash
 # Template management
 ason list                           # List available templates
-ason add NAME PATH                  # Add template to registry
+ason register NAME PATH                  # Add template to registry
 ason remove NAME                    # Remove template from registry
 ason validate TEMPLATE              # Validate template
 

@@ -45,5 +45,10 @@ CRUSH.md
 GEMINI.md
 OPENSOURCE_CHECKLIST.md
 
+# Specification tooling (local only)
+.specify/
+.opencode/
+specs/
+
 # Environment
 .env
