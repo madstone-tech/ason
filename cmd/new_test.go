@@ -116,8 +116,8 @@ func TestNewCmdWithExistingTemplate(t *testing.T) {
 
 	os.Setenv("HOME", tmpHome)
 
-	// Create template directory structure
-	registryDir := filepath.Join(tmpHome, ".ason", "templates")
+	// Create template directory structure (XDG compliant)
+	registryDir := filepath.Join(tmpHome, ".local", "share", "ason", "templates")
 	err = os.MkdirAll(registryDir, 0755)
 	if err != nil {
 		t.Fatalf("Failed to create registry dir: %v", err)
@@ -135,18 +135,17 @@ func TestNewCmdWithExistingTemplate(t *testing.T) {
 		t.Fatalf("Failed to create template file: %v", err)
 	}
 
-	// Create registry metadata file
-	registryFile := filepath.Join(tmpHome, ".ason", "registry.yaml")
-	registryContent := `templates:
-  test-template:
-    name: test-template
-    path: ` + templateDir + `
-    description: Test template
-    type: test
-    size: 100
-    files: 1
-    added: 2023-01-01T00:00:00Z
-    variables: []
+	// Create registry metadata file (TOML format)
+	registryFile := filepath.Join(tmpHome, ".local", "share", "ason", "registry.toml")
+	registryContent := `[templates.test-template]
+name = "test-template"
+path = "` + templateDir + `"
+description = "Test template"
+type = "test"
+size = 100
+files = 1
+added = 2023-01-01T00:00:00Z
+variables = []
 `
 	err = os.WriteFile(registryFile, []byte(registryContent), 0644)
 	if err != nil {

@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-10-22
+
+### Fixed
+- Fixed version injection timing issue where version was set after Cobra command initialization
+- Updated tests to use XDG-compliant paths and TOML format for registry
+
 ## [0.2.1] - 2025-10-22
 
 ### Fixed
-- Version number now correctly displays from GoReleaser ldflags injection
+- Version number now correctly displays from GoReleaser ldflags injection (partial fix)
 
 ## [0.2.0] - 2025-10-22
 

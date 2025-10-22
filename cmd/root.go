@@ -17,6 +17,8 @@ func SetVersionInfo(v, c, d, b string) {
 	commit = c
 	date = d
 	builtBy = b
+	// Update rootCmd.Version directly to override the initialization value
+	rootCmd.Version = v
 }
 
 var rootCmd = &cobra.Command{
@@ -39,7 +41,7 @@ func Execute() error {
 }
 
 func init() {
-	rootCmd.SetVersionTemplate(`※ Ason {{printf "v%s" .Version}}
+	rootCmd.SetVersionTemplate(`※ Ason {{.Version}}
 `)
 
 	// Add commands

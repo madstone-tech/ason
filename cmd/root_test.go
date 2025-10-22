@@ -81,8 +81,12 @@ func TestRootCmdVersionTemplate(t *testing.T) {
 	}
 
 	output := buf.String()
-	if !strings.Contains(output, "※ Ason v0.1.0") {
-		t.Errorf("Version output should contain '※ Ason v0.1.0', got: %v", output)
+	// Version template should show "※ Ason" followed by the version
+	if !strings.Contains(output, "※ Ason") {
+		t.Errorf("Version output should contain '※ Ason', got: %v", output)
+	}
+	if !strings.Contains(output, version) {
+		t.Errorf("Version output should contain version '%s', got: %v", version, output)
 	}
 
 	// Reset for other tests
