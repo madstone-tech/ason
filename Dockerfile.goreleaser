@@ -10,11 +10,8 @@ RUN adduser -D -s /bin/sh ason
 # Copy the binary
 COPY ason /usr/local/bin/ason
 
-# Copy completion script
-COPY scripts/install-completion.sh /usr/local/bin/install-completion.sh
-
 # Set executable permissions
-RUN chmod +x /usr/local/bin/ason /usr/local/bin/install-completion.sh
+RUN chmod +x /usr/local/bin/ason
 
 # Create a directory for templates
 WORKDIR /workspace
