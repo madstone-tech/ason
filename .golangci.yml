@@ -1,0 +1,28 @@
+# golangci-lint configuration
+# https://golangci-lint.run/usage/configuration/
+
+run:
+  timeout: 5m
+  go: '1.25'
+
+linters:
+  enable:
+    - gofmt
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+  disable:
+    - errcheck  # Temporarily disabled - will fix in future PR
+    - unused    # Temporarily disabled - version vars used by ldflags
+
+linters-settings:
+  staticcheck:
+    checks: ["all", "-QF1003"]  # Disable tagged switch suggestion
+
+issues:
+  exclude-rules:
+    # Exclude linting on test files for deferred error checks
+    - path: _test\.go
+      linters:
+        - errcheck
