@@ -1,5 +1,7 @@
-# golangci-lint configuration
+# golangci-lint configuration (v2)
 # https://golangci-lint.run/usage/configuration/
+
+version: v2.5.0
 
 run:
   timeout: 5m
@@ -11,7 +13,6 @@ linters:
     - govet
     - ineffassign
     - staticcheck
-    - typecheck
   disable:
     - errcheck  # Temporarily disabled - will fix in future PR
     - unused    # Temporarily disabled - version vars used by ldflags
