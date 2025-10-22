@@ -9,10 +9,13 @@ run:
 
 linters:
   enable:
-    - gofmt
     - govet
     - ineffassign
   disable:
     - errcheck
     - unused
     - staticcheck
+
+formatters:
+  enable:
+    - gofmt
