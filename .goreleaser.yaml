@@ -172,24 +172,26 @@ release:
       name_template: install-completion.sh
 
 # Homebrew (macOS package manager)
-brews:
-  - repository:
-      owner: madstone-tech
-      name: homebrew-tap
-      token: "{{ .Env.GITHUB_TOKEN }}"
-    directory: Formula
-    homepage: https://github.com/madstone-tech/ason
-    description: "※ The sacred rattle that transforms templates into living projects"
-    license: MIT
-    test: |
-      system "#{bin}/ason --version"
-    install: |
-      bin.install "ason"
-
-      # Generate and install shell completions
-      bash_completion.install "completions/ason.bash" => "ason" if File.exist?("completions/ason.bash")
-      zsh_completion.install "completions/_ason" if File.exist?("completions/_ason")
-      fish_completion.install "completions/ason.fish" if File.exist?("completions/ason.fish")
+# Disabled: requires separate GitHub token with repo access to homebrew-tap
+# Formula will be updated manually or with a separate workflow
+# brews:
+#   - repository:
+#       owner: madstone-tech
+#       name: homebrew-tap
+#       token: "{{ .Env.GITHUB_TOKEN }}"
+#     directory: Formula
+#     homepage: https://github.com/madstone-tech/ason
+#     description: "※ The sacred rattle that transforms templates into living projects"
+#     license: MIT
+#     test: |
+#       system "#{bin}/ason --version"
+#     install: |
+#       bin.install "ason"
+#
+#       # Generate and install shell completions
+#       bash_completion.install "completions/ason.bash" => "ason" if File.exist?("completions/ason.bash")
+#       zsh_completion.install "completions/_ason" if File.exist?("completions/_ason")
+#       fish_completion.install "completions/ason.fish" if File.exist?("completions/ason.fish")
 
 # Announce releases
 announce:
