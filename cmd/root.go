@@ -6,7 +6,18 @@ import (
 
 var (
 	version = "0.1.0"
+	commit  = "none"
+	date    = "unknown"
+	builtBy = "source"
 )
+
+// SetVersionInfo sets the version information (called from main)
+func SetVersionInfo(v, c, d, b string) {
+	version = v
+	commit = c
+	date = d
+	builtBy = b
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "ason",
