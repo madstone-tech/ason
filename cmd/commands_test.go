@@ -52,28 +52,40 @@ func TestListCmdExecution(t *testing.T) {
 	listCmd.SetOut(nil)
 }
 
-func TestAddCmd(t *testing.T) {
-	// Test add command properties
-	if addCmd == nil {
-		t.Fatal("addCmd should not be nil")
+func TestRegisterCmd(t *testing.T) {
+	// Test register command properties
+	if registerCmd == nil {
+		t.Fatal("registerCmd should not be nil")
 	}
 
-	if addCmd.Use != "add [name] [path]" {
-		t.Errorf("addCmd.Use = %v, want %v", addCmd.Use, "add [name] [path]")
+	if registerCmd.Use != "register [name] [path]" {
+		t.Errorf("registerCmd.Use = %v, want %v", registerCmd.Use, "register [name] [path]")
 	}
 
-	if addCmd.Short != "Add a template to the registry" {
-		t.Errorf("addCmd.Short = %v, want %v", addCmd.Short, "Add a template to the registry")
+	if registerCmd.Short != "Register a template in the registry" {
+		t.Errorf("registerCmd.Short = %v, want %v", registerCmd.Short, "Register a template in the registry")
+	}
+
+	// Check that "add" alias exists
+	expectedAliases := []string{"add"}
+	if len(registerCmd.Aliases) != len(expectedAliases) {
+		t.Errorf("registerCmd should have %d aliases, got %d", len(expectedAliases), len(registerCmd.Aliases))
+	}
+
+	for i, alias := range expectedAliases {
+		if i < len(registerCmd.Aliases) && registerCmd.Aliases[i] != alias {
+			t.Errorf("registerCmd.Aliases[%d] = %v, want %v", i, registerCmd.Aliases[i], alias)
+		}
 	}
 }
 
-func TestAddCmdExecution(t *testing.T) {
+func TestRegisterCmdExecution(t *testing.T) {
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
 	defer os.Setenv("HOME", originalHome)
 
 	// Create temporary home directory
-	tmpHome, err := os.MkdirTemp("", "ason_add_test")
+	tmpHome, err := os.MkdirTemp("", "ason_register_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
@@ -96,17 +108,71 @@ func TestAddCmdExecution(t *testing.T) {
 
 	// Capture output
 	var buf bytes.Buffer
-	addCmd.SetOut(&buf)
+	registerCmd.SetOut(&buf)
 
-	// Execute add command with valid template path
-	err = addCmd.RunE(addCmd, []string{"test-template", testTemplateDir})
+	// Execute register command with valid template path
+	err = registerCmd.RunE(registerCmd, []string{"test-template", testTemplateDir})
 	if err != nil {
-		t.Fatalf("addCmd execution failed: %v", err)
+		t.Fatalf("registerCmd execution failed: %v", err)
 	}
 
 	// Test passed if no error occurred
 	// Reset
-	addCmd.SetOut(nil)
+	registerCmd.SetOut(nil)
+}
+
+// TestRegisterCmdAliasWorks verifies that the "add" alias works identically to "register"
+func TestRegisterCmdAliasWorks(t *testing.T) {
+	// Save original home directory
+	originalHome := os.Getenv("HOME")
+	defer os.Setenv("HOME", originalHome)
+
+	// Create temporary home directory
+	tmpHome, err := os.MkdirTemp("", "ason_alias_test")
+	if err != nil {
+		t.Fatalf("Failed to create temp home: %v", err)
+	}
+	defer os.RemoveAll(tmpHome)
+
+	os.Setenv("HOME", tmpHome)
+
+	// Create a test template directory
+	testTemplateDir, err := os.MkdirTemp("", "test_template")
+	if err != nil {
+		t.Fatalf("Failed to create test template dir: %v", err)
+	}
+	defer os.RemoveAll(testTemplateDir)
+
+	// Add some files to the template
+	err = os.WriteFile(filepath.Join(testTemplateDir, "README.md"), []byte("# {{ project_name }}"), 0644)
+	if err != nil {
+		t.Fatalf("Failed to create template file: %v", err)
+	}
+
+	// Verify the alias exists
+	hasAddAlias := false
+	for _, alias := range registerCmd.Aliases {
+		if alias == "add" {
+			hasAddAlias = true
+			break
+		}
+	}
+	if !hasAddAlias {
+		t.Fatal("registerCmd should have 'add' as an alias")
+	}
+
+	// Capture output
+	var buf bytes.Buffer
+	registerCmd.SetOut(&buf)
+
+	// Execute via the alias (Cobra handles this internally)
+	err = registerCmd.RunE(registerCmd, []string{"test-template-alias", testTemplateDir})
+	if err != nil {
+		t.Fatalf("registerCmd execution via alias failed: %v", err)
+	}
+
+	// Reset
+	registerCmd.SetOut(nil)
 }
 
 func TestRemoveCmd(t *testing.T) {
@@ -240,7 +306,7 @@ func TestCommandsAreRegistered(t *testing.T) {
 
 	expectedCommands := map[string]bool{
 		"list":     false,
-		"add":      false,
+		"register": false,
 		"remove":   false,
 		"validate": false,
 		"new":      false,

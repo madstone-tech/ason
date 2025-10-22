@@ -455,7 +455,7 @@ export ASON_GITHUB_USERNAME="yourusername"
 # Ason aliases
 alias anew='ason new'
 alias alist='ason list'
-alias aadd='ason add'
+alias aregister='ason register'
 alias avalidate='ason validate'
 
 # Quick project creation functions

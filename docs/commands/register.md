@@ -1,18 +1,18 @@
-# ※ ason add
+# ※ ason register
 
-> *Prepare templates for transformation by adding them to your sacred registry*
+> *Prepare templates for transformation by registering them to your sacred registry*
 
-The `ason add` command prepares templates for invocation by adding them to your local template registry, making them available for use with `ason new`.
+The `ason register` command prepares templates for invocation by registering them to your local template registry, making them available for use with `ason new`.
 
 ## Synopsis
 
 ```bash
-ason add TEMPLATE_NAME SOURCE_PATH [flags]
+ason register TEMPLATE_NAME SOURCE_PATH [flags]
 ```
 
 ## Description
 
-The `add` command catalyzes the preparation of templates by copying them into your local registry. Once added, templates become available for project generation and can be referenced by name rather than full path.
+The `register` command catalyzes the preparation of templates by copying them into your local registry. Once registered, templates become available for project generation and can be referenced by name rather than full path.
 
 ## Arguments
 
@@ -25,7 +25,7 @@ The name to assign to the template in your registry. This will be the identifier
 - Avoid spaces and special characters
 
 ### SOURCE_PATH
-The path to the template directory or archive to add.
+The path to the template directory or archive to register.
 
 **Supported sources:**
 - **Local directory**: `/path/to/my-template`
@@ -39,7 +39,7 @@ The path to the template directory or archive to add.
 Provide a description for the template.
 
 ```bash
-ason add react-app ./templates/react \
+ason register react-app ./templates/react \
   --description "Modern React application with TypeScript"
 ```
 
@@ -55,7 +55,7 @@ Specify the template type/category.
 - `desktop` - Desktop applications
 
 ```bash
-ason add go-service ./templates/go-microservice \
+ason register go-service ./templates/go-microservice \
   --type backend \
   --description "Go microservice with gRPC"
 ```
@@ -65,23 +65,23 @@ Overwrite existing template with the same name.
 
 ```bash
 # Replace existing template
-ason add react-app ./new-react-template --force
+ason register react-app ./new-react-template --force
 ```
 
 ### --validate
-Validate template structure before adding.
+Validate template structure before registering.
 
 ```bash
-# Validate before adding
-ason add my-template ./path/to/template --validate
+# Validate before registering
+ason register my-template ./path/to/template --validate
 ```
 
 ### --dry-run
-Show what would be added without actually adding.
+Show what would be added without actually registering.
 
 ```bash
 # Preview the add operation
-ason add test-template ./my-template --dry-run
+ason register test-template ./my-template --dry-run
 ```
 
 ### Global Flags
@@ -90,18 +90,18 @@ ason add test-template ./my-template --dry-run
 
 ## Examples
 
-### Basic Template Addition
+### Basic Template Registration
 
 ```bash
 # Add local template
-ason add react-app ./templates/react-app
+ason register react-app ./templates/react-app
 
 # Add with description
-ason add go-service ./templates/golang-service \
+ason register go-service ./templates/golang-service \
   --description "Production-ready Go microservice"
 
 # Add with type and description
-ason add terraform-aws ./infra/aws-template \
+ason register terraform-aws ./infra/aws-template \
   --type infrastructure \
   --description "AWS infrastructure with Terraform"
 ```
@@ -110,34 +110,34 @@ ason add terraform-aws ./infra/aws-template \
 
 ```bash
 # Replace existing template
-ason add react-app ./new-react-template --force
+ason register react-app ./new-react-template --force
 
-# Validate before adding
-ason add complex-template ./templates/complex --validate
+# Validate before registering
+ason register complex-template ./templates/complex --validate
 
 # Preview addition
-ason add test-template ./experimental --dry-run
+ason register test-template ./experimental --dry-run
 
 # Full specification
-ason add node-api ./templates/nodejs-api \
+ason register node-api ./templates/nodejs-api \
   --type backend \
   --description "Node.js REST API with Express and PostgreSQL" \
   --validate
 ```
 
-### Batch Template Addition
+### Batch Template Registration
 
 ```bash
 # Add multiple templates
 for template in ./templates/*/; do
   name=$(basename "$template")
-  ason add "$name" "$template"
+  ason register "$name" "$template"
 done
 
 # Add with consistent typing
-ason add react-spa ./templates/react --type web
-ason add vue-app ./templates/vue --type web
-ason add angular-app ./templates/angular --type web
+ason register react-spa ./templates/react --type web
+ason register vue-app ./templates/vue --type web
+ason register angular-app ./templates/angular --type web
 ```
 
 ## Template Structure Requirements
@@ -220,7 +220,7 @@ Use Pongo2 syntax for variables:
 [DRY RUN] Would validate template structure
 [DRY RUN] Would copy to: ~/.ason/templates/react-app
 [DRY RUN] Would register as: react-app
-🔮 [DRY RUN] Template ready for addition. Use without --dry-run to add.
+🔮 [DRY RUN] Template ready for addition. Use without --dry-run to register.
 ```
 
 ### Validation Output
@@ -239,8 +239,8 @@ Use Pongo2 syntax for variables:
 ### Template Name Already Exists
 ```
 ❌ Template 'react-app' already exists in registry
-💡 Use --force to overwrite: ason add react-app ./new-template --force
-💡 Or choose a different name: ason add react-app-v2 ./new-template
+💡 Use --force to overwrite: ason register react-app ./new-template --force
+💡 Or choose a different name: ason register react-app-v2 ./new-template
 ```
 
 ### Source Path Not Found
@@ -330,35 +330,35 @@ variables = ["service_name", "module_path"]
 ### 1. Template Organization
 ```bash
 # Use consistent naming
-ason add react-spa ./templates/react-spa --type web
-ason add vue-spa ./templates/vue-spa --type web
+ason register react-spa ./templates/react-spa --type web
+ason register vue-spa ./templates/vue-spa --type web
 
 # Provide good descriptions
-ason add node-api ./templates/nodejs-api \
+ason register node-api ./templates/nodejs-api \
   --description "Express.js API with PostgreSQL and Docker"
 
 # Specify types for better organization
-ason add terraform-aws ./infra/aws --type infrastructure
+ason register terraform-aws ./infra/aws --type infrastructure
 ```
 
 ### 2. Template Validation
 ```bash
 # Always validate complex templates
-ason add complex-template ./templates/complex --validate
+ason register complex-template ./templates/complex --validate
 
 # Test with dry-run first
-ason add experimental ./templates/experimental --dry-run
+ason register experimental ./templates/experimental --dry-run
 ```
 
 ### 3. Template Versioning
 ```bash
 # Version your templates
-ason add react-app-v1 ./templates/react-v1
-ason add react-app-v2 ./templates/react-v2
+ason register react-app-v1 ./templates/react-v1
+ason register react-app-v2 ./templates/react-v2
 
 # Or use descriptive names
-ason add react-hooks ./templates/react-with-hooks
-ason add react-class ./templates/react-with-classes
+ason register react-hooks ./templates/react-with-hooks
+ason register react-class ./templates/react-with-classes
 ```
 
 ### 4. Template Documentation
@@ -377,37 +377,37 @@ my-template/
 ### 1. Personal Template Library
 ```bash
 # Add your common templates
-ason add my-react ./personal-templates/react
-ason add my-go-api ./personal-templates/go-api
-ason add my-terraform ./personal-templates/terraform
+ason register my-react ./personal-templates/react
+ason register my-go-api ./personal-templates/go-api
+ason register my-terraform ./personal-templates/terraform
 ```
 
 ### 2. Team Template Sharing
 ```bash
 # Add team templates
-ason add company-frontend ./team-templates/frontend --type web
-ason add company-backend ./team-templates/backend --type backend
-ason add company-infra ./team-templates/infrastructure --type infrastructure
+ason register company-frontend ./team-templates/frontend --type web
+ason register company-backend ./team-templates/backend --type backend
+ason register company-infra ./team-templates/infrastructure --type infrastructure
 ```
 
 ### 3. Template Development
 ```bash
 # Test template during development
-ason add test-template ./work-in-progress --dry-run
-ason add test-template ./work-in-progress --validate
-ason add test-template ./work-in-progress --force
+ason register test-template ./work-in-progress --dry-run
+ason register test-template ./work-in-progress --validate
+ason register test-template ./work-in-progress --force
 ```
 
 ### 4. Template Migration
 ```bash
 # Migrate from old structure
-ason add new-react ./templates/react-new --force
+ason register new-react ./templates/react-new --force
 ason remove old-react
 ```
 
 ## Integration Examples
 
-### CI/CD Template Addition
+### CI/CD Template Registration
 ```yaml
 # .github/workflows/add-templates.yml
 name: Add Templates to Registry
@@ -428,7 +428,7 @@ jobs:
         run: |
           for template in templates/*/; do
             name=$(basename "$template")
-            ason add "$name" "$template" --validate
+            ason register "$name" "$template" --validate
           done
 ```
 
@@ -444,7 +444,7 @@ add_templates() {
     if [[ -d "$template" ]]; then
       local name=$(basename "$template")
       echo "Adding template: $name"
-      ason add "$name" "$template" --validate || echo "Failed to add $name"
+      ason register "$name" "$template" --validate || echo "Failed to register $name"
     fi
   done
 }

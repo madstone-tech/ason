@@ -602,7 +602,7 @@ ason validate my-template --check config
 ## Related Commands
 
 - [`ason new`](new.md) - Create projects from templates
-- [`ason add`](add.md) - Add templates to registry
+- [`ason register`](add.md) - Add templates to registry
 - [`ason list`](list.md) - List available templates
 - [`ason remove`](remove.md) - Remove templates from registry
 

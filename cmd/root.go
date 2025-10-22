@@ -34,7 +34,7 @@ func init() {
 	// Add commands
 	rootCmd.AddCommand(newCmd)
 	rootCmd.AddCommand(listCmd)
-	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(registerCmd)
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(validateCmd)
 

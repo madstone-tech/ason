@@ -1029,7 +1029,7 @@ Once your template is thoroughly tested:
 
 ```bash
 # Add to your registry
-ason add nodejs-api ./nodejs-api-template \
+ason register nodejs-api ./nodejs-api-template \
   --type backend \
   --description "Professional Node.js REST API with Express, testing, and best practices"
 

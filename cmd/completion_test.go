@@ -208,7 +208,7 @@ func TestCompleteVariableKeys(t *testing.T) {
 	}
 }
 
-func TestCompleteAddCommand(t *testing.T) {
+func TestCompleteRegisterCommand(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     []string
@@ -233,9 +233,9 @@ func TestCompleteAddCommand(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			completions, directive := completeAddCommand(nil, tt.args, "")
+			completions, directive := completeRegisterCommand(nil, tt.args, "")
 
-			// Should always return no completions for add command
+			// Should always return no completions for register command
 			if len(completions) != 0 {
 				t.Errorf("Expected no completions, got %d", len(completions))
 			}
@@ -256,8 +256,8 @@ func TestSetupCompletions(t *testing.T) {
 		t.Error("newCmd should have ValidArgsFunction set")
 	}
 
-	if addCmd.ValidArgsFunction == nil {
-		t.Error("addCmd should have ValidArgsFunction set")
+	if registerCmd.ValidArgsFunction == nil {
+		t.Error("registerCmd should have ValidArgsFunction set")
 	}
 
 	if removeCmd.ValidArgsFunction == nil {

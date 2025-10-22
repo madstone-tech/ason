@@ -133,7 +133,7 @@ ason list --format json | jq '.templates[].name'
 └─────────────────┴──────────────────────────────────┴──────────┴─────────────┘
 
 💡 Use 'ason new TEMPLATE OUTPUT_DIR' to create a project
-💡 Use 'ason add' to prepare more templates for invocation
+💡 Use 'ason register' to prepare more templates for invocation
 ```
 
 ### Empty Registry
@@ -144,7 +144,7 @@ ason list --format json | jq '.templates[].name'
 No templates ready for invocation.
 
 💡 Prepare templates for transformation:
-   ason add my-template /path/to/template
+   ason register my-template /path/to/template
 
 💡 Find community templates:
    Visit https://github.com/madstone-tech/ason-templates
@@ -366,7 +366,7 @@ Each template is stored as a directory within the registry.
 ### Registry Not Found
 ```
 ❌ Template registry not found
-💡 Initialize with: ason add my-first-template /path/to/template
+💡 Initialize with: ason register my-first-template /path/to/template
 ```
 
 ### Permission Issues
@@ -378,13 +378,13 @@ Each template is stored as a directory within the registry.
 ### Corrupted Templates
 ```
 ❌ Template 'broken-template' appears corrupted
-💡 Remove and re-add: ason remove broken-template && ason add broken-template /path/to/source
+💡 Remove and re-add: ason remove broken-template && ason register broken-template /path/to/source
 ```
 
 ## Related Commands
 
 - [`ason new`](new.md) - Create projects from templates
-- [`ason add`](add.md) - Add templates to registry
+- [`ason register`](add.md) - Add templates to registry
 - [`ason remove`](remove.md) - Remove templates from registry
 - [`ason validate`](validate.md) - Validate template configuration
 
