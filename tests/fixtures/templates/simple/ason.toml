@@ -1,0 +1,10 @@
+[template]
+name = "simple"
+description = "A simple template for testing"
+version = "1.0.0"
+
+[[variables]]
+name = "project_name"
+description = "Name of the project"
+type = "string"
+required = true

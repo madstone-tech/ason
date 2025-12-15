@@ -9,13 +9,26 @@ run:
 
 linters:
   enable:
+    # Safety and correctness
     - govet
-    - ineffassign
-  disable:
-    - errcheck
-    - unused
     - staticcheck
+    - errcheck
+    
+    # Code quality
+    - ineffassign
+    - gosimple
+    - unused
+    - misspell
+    
+    # Documentation
+    - revive
+  disable:
+    - exhaustivestruct
+    - exhaustive
+    - varnamelen
+    - interfacer
 
 formatters:
   enable:
     - gofmt
+    - goimports

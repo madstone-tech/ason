@@ -1,0 +1,23 @@
+[template]
+name = "with-variables"
+description = "Template with multiple variables"
+version = "1.0.0"
+
+[[variables]]
+name = "project_name"
+description = "Name of the project"
+type = "string"
+required = true
+
+[[variables]]
+name = "author"
+description = "Author of the project"
+type = "string"
+required = true
+
+[[variables]]
+name = "version"
+description = "Initial version"
+type = "string"
+required = false
+default = "0.1.0"
