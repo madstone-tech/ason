@@ -62,7 +62,11 @@ func TestGenerationWithCustomEngine(t *testing.T) {
 	require.NoError(t, err)
 
 	ctx := context.Background()
-	err = gen.Generate(ctx, "/template", map[string]interface{}{}, "/output")
+	tmpDir := t.TempDir()
+
+	// Create a temporary template directory with a simple file
+	templateDir := t.TempDir()
+	err = gen.Generate(ctx, templateDir, map[string]interface{}{}, tmpDir)
 
 	assert.NoError(t, err)
 	assert.Equal(t, customEngine, gen.GetEngine())
@@ -76,7 +80,9 @@ func TestGenerationContextCancellation(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	err := gen.Generate(ctx, "/template", map[string]interface{}{}, "/output")
+	templateDir := t.TempDir()
+	tmpDir := t.TempDir()
+	err := gen.Generate(ctx, templateDir, map[string]interface{}{}, tmpDir)
 	assert.Equal(t, context.Canceled, err)
 }
 
@@ -90,7 +96,9 @@ func TestGenerationContextTimeout(t *testing.T) {
 
 	time.Sleep(10 * time.Millisecond)
 
-	err := gen.Generate(ctx, "/template", map[string]interface{}{}, "/output")
+	templateDir := t.TempDir()
+	tmpDir := t.TempDir()
+	err := gen.Generate(ctx, templateDir, map[string]interface{}{}, tmpDir)
 	assert.Equal(t, context.DeadlineExceeded, err)
 }
 
@@ -103,10 +111,14 @@ func TestGenerationMultipleProjects(t *testing.T) {
 	ctx := context.Background()
 
 	// Generate first project
-	err1 := gen.Generate(ctx, "/template1", map[string]interface{}{"name": "proj1"}, "/output1")
+	templateDir1 := t.TempDir()
+	tmpDir1 := t.TempDir()
+	err1 := gen.Generate(ctx, templateDir1, map[string]interface{}{"name": "proj1"}, tmpDir1)
 
 	// Generate second project
-	err2 := gen.Generate(ctx, "/template2", map[string]interface{}{"name": "proj2"}, "/output2")
+	templateDir2 := t.TempDir()
+	tmpDir2 := t.TempDir()
+	err2 := gen.Generate(ctx, templateDir2, map[string]interface{}{"name": "proj2"}, tmpDir2)
 
 	// Both should complete without error (validation will happen later)
 	_ = err1

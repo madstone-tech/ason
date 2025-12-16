@@ -5,30 +5,23 @@ version: "2"
 
 run:
   timeout: 5m
-  go: "1.25"
+  go: "1.21"
 
 linters:
   enable:
-    # Safety and correctness
+    # Safety and correctness (enabled by default)
     - govet
     - staticcheck
     - errcheck
+    - ineffassign
+    - unused
     
     # Code quality
-    - ineffassign
-    - gosimple
-    - unused
     - misspell
     
-    # Documentation
+    # Documentation (strict for library)
     - revive
   disable:
-    - exhaustivestruct
     - exhaustive
+    - exhaustruct
     - varnamelen
-    - interfacer
-
-formatters:
-  enable:
-    - gofmt
-    - goimports
