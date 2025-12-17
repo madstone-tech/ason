@@ -2,12 +2,10 @@
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "Ason - Project Scaffolding Tool",
   "description": "A template-based project scaffolding tool that transforms Jinja2-like templates into fully-formed projects with variable substitution, XDG compliance, and binary preservation. Ason provides both CLI and programmatic APIs for project generation and template management.",
+  "url": "https://context7.com/madstone-tech/ason",
+  "public_key": "pk_rTSBinShGRDJogyhauf9L",
   "branch": "main",
-  "folders": [
-    "docs",
-    "pkg",
-    "examples"
-  ],
+  "folders": ["docs", "pkg", "examples"],
   "excludeFolders": [
     "src",
     "internal",
