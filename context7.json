@@ -1,7 +1,7 @@
 {
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "Ason - Project Scaffolding Tool",
-  "description": "A template-based project scaffolding tool that transforms Jinja2-like templates into fully-formed projects with variable substitution, XDG compliance, and binary preservation.",
+  "description": "A template-based project scaffolding tool that transforms Jinja2-like templates into fully-formed projects with variable substitution, XDG compliance, and binary preservation. Ason provides both CLI and programmatic APIs for project generation and template management.",
   "branch": "main",
   "folders": [
     "docs",
@@ -23,21 +23,28 @@
     "CHANGELOG.md",
     "SECURITY.md",
     "LICENSE",
-    "CODE_OF_CONDUCT.md"
+    "CODE_OF_CONDUCT.md",
+    "TESTING_GUIDE.md"
   ],
   "rules": [
     "Always use the public API from pkg/ (Generator, Registry, Engine) for programmatic access",
-    "Use NewDefaultEngine() for Pongo2 template engine, or implement custom Engine interface",
-    "Registry uses XDG Base Directory specification (~/.local/share/ason/registry.toml)",
-    "All paths are validated for path traversal attacks - use IsSecurePath() internally",
+    "CLI users: Use 'ason new TEMPLATE OUTPUT --var key=value' for project generation",
+    "Use NewDefaultEngine() for Pongo2 template engine, or implement custom Engine interface for custom templating",
+    "Registry uses XDG Base Directory specification (~/.local/share/ason/registry.toml) - follows OS conventions",
+    "All paths are validated for path traversal attacks - Ason prevents directory escape attacks",
     "Template variables must be valid identifiers (alphanumeric + underscore)",
-    "Binary files are automatically detected and preserved during generation",
-    "Use context.Context for cancellation and timeout support in Generate()",
+    "Binary files are automatically detected and preserved during generation - no text transformation applied",
+    "Use context.Context for cancellation and timeout support in Generate() for graceful shutdown",
     "Thread-safe operations: Generator uses RWMutex, Registry supports concurrent reads with serialized writes",
     "Always handle errors returned by Generate() and Registry methods - never ignore them",
-    "For large files (>10MB), consider streaming approach documented in Phase 3 roadmap"
+    "For template development: Use 'ason validate' CLI command to check template syntax before use",
+    "For large files (>10MB), consider streaming approach documented in Phase 3 roadmap for better performance"
   ],
   "previousVersions": [
+    {
+      "tag": "v0.3.1",
+      "title": "v0.3.1 - Linting & Quality Improvements"
+    },
     {
       "tag": "v0.3.0",
       "title": "v0.3.0 - Library Export Release"
