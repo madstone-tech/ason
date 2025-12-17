@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2025-12-16
+
+### Fixed
+- Fixed all 52+ linting violations across entire codebase
+  - **errcheck**: Fixed error handling for file operations (Close, Setenv, RemoveAll)
+  - **revive**: Added package-level godoc comments to all internal packages, fixed export documentation
+  - **staticcheck**: Removed unreachable code, fixed optimization warnings
+  - **unused**: Properly handled unused function parameters
+- Improved code quality with comprehensive linting compliance
+- All tests passing (27+ integration and unit tests)
+- golangci-lint now reports 0 issues
+
+### Changed
+- Enhanced error handling in test files for better reliability
+- Improved documentation comments for all exported APIs
+
+### Note
+- This is a patch release with no functional changes - purely code quality improvements
+- Full backward compatibility maintained with v0.3.0
+
 ## [0.3.0] - 2025-12-16
 
 ### Added - Library Export (Feature 002)
@@ -95,6 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See git tags for release history.
 
+[0.3.1]: https://github.com/madstone-tech/ason/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/madstone-tech/ason/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/madstone-tech/ason/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/madstone-tech/ason/compare/v0.2.0...v0.2.1
