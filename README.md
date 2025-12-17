@@ -204,6 +204,9 @@ func main() {
 For detailed API documentation, see:
 - [Engine Interface Documentation](docs/api/engine_interface.md)
 - [GoDoc](https://pkg.go.dev/github.com/madstone-tech/ason)
+- [Context7 Documentation](https://context7.com) - Access up-to-date Ason docs in your AI coding assistant with `use context7`
+
+For library publishers interested in adding Ason to Context7, see [CONTEXT7_PUBLISHING_GUIDE.md](CONTEXT7_PUBLISHING_GUIDE.md).
 
 ### Thread Safety
 
