@@ -1,0 +1,58 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "Ason - Project Scaffolding Tool",
+  "description": "A template-based project scaffolding tool that transforms Jinja2-like templates into fully-formed projects with variable substitution, XDG compliance, and binary preservation.",
+  "branch": "main",
+  "folders": [
+    "docs",
+    "pkg",
+    "examples"
+  ],
+  "excludeFolders": [
+    "src",
+    "internal",
+    "cmd",
+    "tests",
+    ".github",
+    "roadmap",
+    "node_modules",
+    ".test",
+    ".git"
+  ],
+  "excludeFiles": [
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "LICENSE",
+    "CODE_OF_CONDUCT.md"
+  ],
+  "rules": [
+    "Always use the public API from pkg/ (Generator, Registry, Engine) for programmatic access",
+    "Use NewDefaultEngine() for Pongo2 template engine, or implement custom Engine interface",
+    "Registry uses XDG Base Directory specification (~/.local/share/ason/registry.toml)",
+    "All paths are validated for path traversal attacks - use IsSecurePath() internally",
+    "Template variables must be valid identifiers (alphanumeric + underscore)",
+    "Binary files are automatically detected and preserved during generation",
+    "Use context.Context for cancellation and timeout support in Generate()",
+    "Thread-safe operations: Generator uses RWMutex, Registry supports concurrent reads with serialized writes",
+    "Always handle errors returned by Generate() and Registry methods - never ignore them",
+    "For large files (>10MB), consider streaming approach documented in Phase 3 roadmap"
+  ],
+  "previousVersions": [
+    {
+      "tag": "v0.3.0",
+      "title": "v0.3.0 - Library Export Release"
+    },
+    {
+      "tag": "v0.2.2",
+      "title": "v0.2.2"
+    },
+    {
+      "tag": "v0.2.1",
+      "title": "v0.2.1"
+    },
+    {
+      "tag": "v0.2.0",
+      "title": "v0.2.0"
+    }
+  ]
+}
