@@ -7,8 +7,8 @@ import (
 	internalEngine "github.com/madstone-tech/ason/internal/engine"
 )
 
-// GenerationError is returned when generation fails.
-// It includes the phase and reason for the failure.
+// NewGenerationError creates a new GenerationError with the given phase and reason.
+// It is returned when generation fails.
 func NewGenerationError(phase, reason string) error {
 	return &internal.GenerationError{
 		Phase:  phase,
@@ -16,7 +16,7 @@ func NewGenerationError(phase, reason string) error {
 	}
 }
 
-// DefaultEngine returns a new default template engine (Pongo2).
+// NewDefaultEngine returns a new default template engine (Pongo2).
 // This is the recommended engine for most users.
 // The Pongo2 engine supports Jinja2-like template syntax with variable substitution and filters.
 //
