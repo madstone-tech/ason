@@ -1,3 +1,5 @@
+// Package main provides a working example and test of Ason library APIs.
+// It demonstrates the Generator, Registry, and Engine APIs with 5 test scenarios.
 package main
 
 import (
@@ -12,7 +14,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Testing Ason Library API ===\n")
+	fmt.Println("=== Testing Ason Library API ===")
 
 	// Test 1: Generator with Default Engine
 	fmt.Println("Test 1: Generator with Default Engine")
@@ -66,14 +68,20 @@ func testRegistry() {
 	tmpDir := os.TempDir()
 	template1Dir := filepath.Join(tmpDir, "template1")
 	template2Dir := filepath.Join(tmpDir, "template2")
-	os.MkdirAll(template1Dir, 0755)
-	os.MkdirAll(template2Dir, 0755)
-	defer os.RemoveAll(template1Dir)
-	defer os.RemoveAll(template2Dir)
+	if err := os.MkdirAll(template1Dir, 0755); err != nil {
+		log.Fatalf("Failed to create template1 dir: %v", err)
+	}
+	if err := os.MkdirAll(template2Dir, 0755); err != nil {
+		log.Fatalf("Failed to create template2 dir: %v", err)
+	}
+	defer os.RemoveAll(template1Dir) // nolint:errcheck
+	defer os.RemoveAll(template2Dir) // nolint:errcheck
 
 	// Create a custom registry in temp directory
 	registryPath := filepath.Join(tmpDir, "test-registry.toml")
-	defer os.Remove(registryPath)
+	defer func() {
+		_ = os.Remove(registryPath) // nolint:errcheck
+	}()
 
 	reg, err := pkg.NewRegistryAt(registryPath)
 	if err != nil {

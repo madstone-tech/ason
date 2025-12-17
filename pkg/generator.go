@@ -199,14 +199,12 @@ func validateInputs(templatePath, outputPath string, variables map[string]interf
 	}
 
 	// Validate all variables
-	if variables != nil {
-		for name, value := range variables {
-			if err := internal.ValidateVariableName(name); err != nil {
-				return err
-			}
-			if err := internal.ValidateVariableValue(name, value); err != nil {
-				return err
-			}
+	for name, value := range variables {
+		if err := internal.ValidateVariableName(name); err != nil {
+			return err
+		}
+		if err := internal.ValidateVariableValue(name, value); err != nil {
+			return err
 		}
 	}
 
@@ -302,13 +300,17 @@ func (g *Generator) processFileForGeneration(
 		if err != nil {
 			return err
 		}
-		defer srcFile.Close()
+		defer func() {
+			_ = srcFile.Close() // nolint:errcheck
+		}()
 
 		dstFile, err := os.Create(destPath)
 		if err != nil {
 			return err
 		}
-		defer dstFile.Close()
+		defer func() {
+			_ = dstFile.Close() // nolint:errcheck
+		}()
 
 		_, err = io.Copy(dstFile, srcFile)
 		return err
