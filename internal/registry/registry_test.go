@@ -10,16 +10,26 @@ import (
 func TestNewRegistry(t *testing.T) {
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	defer func() {
+		if err := os.Setenv("HOME", originalHome); err != nil {
+			t.Logf("Failed to restore HOME: %v", err)
+		}
+	}()
 
 	// Create temporary home directory
 	tmpHome, err := os.MkdirTemp("", "ason_home_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	registry, err := NewRegistry()
 	if err != nil {
@@ -53,7 +63,11 @@ func TestRegistry_List_Empty(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	registry := &Registry{path: tmpDir}
 
@@ -74,7 +88,11 @@ func TestRegistry_AddAndList(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	registry := &Registry{path: tmpDir}
 
@@ -83,7 +101,11 @@ func TestRegistry_AddAndList(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create test template dir: %v", err)
 	}
-	defer os.RemoveAll(testTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(testTemplateDir); err != nil {
+			t.Logf("Failed to remove test template dir: %v", err)
+		}
+	}()
 
 	// Add some files to the template
 	err = os.WriteFile(filepath.Join(testTemplateDir, "README.md"), []byte("# {{ project_name }}"), 0644)
@@ -146,7 +168,11 @@ func TestRegistry_Get(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	registry := &Registry{path: tmpDir}
 
@@ -155,7 +181,11 @@ func TestRegistry_Get(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create test template dir: %v", err)
 	}
-	defer os.RemoveAll(testTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(testTemplateDir); err != nil {
+			t.Logf("Failed to remove test template dir: %v", err)
+		}
+	}()
 
 	// Add some files to the template
 	err = os.WriteFile(filepath.Join(testTemplateDir, "test.txt"), []byte("test"), 0644)
@@ -192,7 +222,11 @@ func TestRegistry_Remove(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	registry := &Registry{path: tmpDir}
 
@@ -201,7 +235,11 @@ func TestRegistry_Remove(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create test template dir: %v", err)
 	}
-	defer os.RemoveAll(testTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(testTemplateDir); err != nil {
+			t.Logf("Failed to remove test template dir: %v", err)
+		}
+	}()
 
 	// Add some files to the template
 	err = os.WriteFile(filepath.Join(testTemplateDir, "test.txt"), []byte("test"), 0644)
@@ -252,7 +290,11 @@ func TestRegistry_RemoveWithBackup(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	registry := &Registry{path: tmpDir}
 
@@ -261,7 +303,11 @@ func TestRegistry_RemoveWithBackup(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create test template dir: %v", err)
 	}
-	defer os.RemoveAll(testTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(testTemplateDir); err != nil {
+			t.Logf("Failed to remove test template dir: %v", err)
+		}
+	}()
 
 	// Add some files to the template
 	err = os.WriteFile(filepath.Join(testTemplateDir, "test.txt"), []byte("test content"), 0644)
@@ -303,7 +349,11 @@ func TestRegistry_RemoveNonExistent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	registry := &Registry{path: tmpDir}
 

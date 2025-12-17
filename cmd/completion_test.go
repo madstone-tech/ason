@@ -11,16 +11,26 @@ import (
 func TestCompleteTemplateNames(t *testing.T) {
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	defer func() {
+		if err := os.Setenv("HOME", originalHome); err != nil {
+			t.Logf("Failed to restore HOME: %v", err)
+		}
+	}()
 
 	// Create temporary home directory
 	tmpHome, err := os.MkdirTemp("", "ason_completion_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	// Test with empty registry (should return no completions)
 	completions, directive := completeTemplateNames(nil, []string{}, "test")
@@ -36,16 +46,26 @@ func TestCompleteTemplateNames(t *testing.T) {
 func TestCompleteTemplateNamesOrPaths(t *testing.T) {
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	defer func() {
+		if err := os.Setenv("HOME", originalHome); err != nil {
+			t.Logf("Failed to restore HOME: %v", err)
+		}
+	}()
 
 	// Create temporary home directory
 	tmpHome, err := os.MkdirTemp("", "ason_completion_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	// Test with empty registry (should fall back to directory completion)
 	completions, directive := completeTemplateNamesOrPaths(nil, []string{}, "test")
@@ -75,17 +95,24 @@ func TestCompleteTemplatePaths(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	// Change to temp directory
 	originalWd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() {
+		if err := os.Chdir(originalWd); err != nil {
+			t.Logf("Failed to change back to original wd: %v", err)
+		}
+	}()
 
-	err = os.Chdir(tmpDir)
-	if err != nil {
+	if err := os.Chdir(tmpDir); err != nil {
 		t.Fatalf("Failed to change directory: %v", err)
 	}
 

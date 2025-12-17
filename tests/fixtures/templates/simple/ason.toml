@@ -1,0 +1,4 @@
+[template]
+name = "simple"
+description = "Simple test template"
+version = "1.0.0"

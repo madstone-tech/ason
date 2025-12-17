@@ -1,3 +1,4 @@
+// Package prompt provides interactive prompt functionality using Bubble Tea.
 package prompt
 
 import (
@@ -13,6 +14,7 @@ type TextPrompt struct {
 	done    bool
 }
 
+// NewTextPrompt creates a new text prompt with the given prompt text and optional default value
 func NewTextPrompt(prompt string, defaultValue interface{}) TextPrompt {
 	defaultStr := ""
 	if defaultValue != nil {
@@ -25,10 +27,12 @@ func NewTextPrompt(prompt string, defaultValue interface{}) TextPrompt {
 	}
 }
 
+// Init initializes the prompt (returns no command)
 func (m TextPrompt) Init() tea.Cmd {
 	return nil
 }
 
+// Update handles user input and returns the updated model
 func (m TextPrompt) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -52,6 +56,7 @@ func (m TextPrompt) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+// View renders the prompt as a string
 func (m TextPrompt) View() string {
 	if m.done {
 		return ""

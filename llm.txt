@@ -1,0 +1,596 @@
+# Ason - Project Scaffolding Tool
+
+Ason is a powerful, lightweight project scaffolding tool written in Go that transforms templates into fully-formed projects. It provides both a CLI tool and a library API for programmatic template generation.
+
+## Quick Start
+
+### Installation
+```bash
+# macOS (Homebrew)
+brew tap madstone-tech/tap
+brew install ason
+
+# Linux
+curl -sL https://github.com/madstone-tech/ason/releases/latest/download/ason_Linux_x86_64.tar.gz | tar xz
+sudo mv ason /usr/local/bin/
+
+# Go
+go install github.com/madstone-tech/ason@latest
+```
+
+### Version
+```bash
+ason --version
+```
+
+## CLI Commands
+
+### Create Projects
+```bash
+# From registered template
+ason new <template-name> <output-directory>
+ason new golang-service my-service
+
+# From local directory
+ason new ./my-template ./output
+
+# With variables
+ason new golang-service my-service --var name=MyService --var author=Alice
+
+# Dry run (preview without writing)
+ason new golang-service my-service --dry-run
+```
+
+### Template Registry Management
+```bash
+# Register a template
+ason register <name> <path> [--description "Description"]
+ason register golang-service ~/templates/golang-service
+
+# List registered templates
+ason list
+
+# List in JSON format
+ason list --format json
+
+# Remove a template
+ason remove <name>
+ason remove golang-service
+
+# Validate a template
+ason validate <path>
+ason validate ~/templates/golang-service
+```
+
+### Help
+```bash
+ason --help
+ason new --help
+ason register --help
+```
+
+## Using Ason as a Library
+
+### Installation
+```bash
+go get github.com/madstone-tech/ason
+```
+
+Import in your code:
+```go
+import "github.com/madstone-tech/ason/pkg"
+```
+
+### Generator API
+
+Generate projects programmatically with context support for cancellation and timeouts.
+
+#### Create a Generator
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"time"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+func main() {
+	// Create with default Pongo2 engine
+	engine := pkg.NewDefaultEngine()
+	gen, err := pkg.NewGenerator(engine)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Define template variables
+	variables := map[string]interface{}{
+		"project_name": "my-app",
+		"author":       "Alice",
+		"version":      "1.0.0",
+	}
+
+	// Generate project with 5 second timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = gen.Generate(ctx, "./template", variables, "./output")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	println("Project generated successfully")
+}
+```
+
+#### Methods
+- `NewGenerator(engine Engine) (*Generator, error)` - Create new generator
+- `Generate(ctx context.Context, templatePath string, variables map[string]interface{}, outputPath string) error` - Generate project
+- `GetEngine() Engine` - Get the configured engine
+
+### Registry API
+
+Manage template registry with XDG-compliant storage.
+
+```go
+package main
+
+import (
+	"log"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+func main() {
+	// Use default XDG location (~/.local/share/ason/registry.toml)
+	reg, err := pkg.NewRegistry()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Register a template (path must exist)
+	err = reg.Register("golang_service", "/path/to/template", "Go microservice")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// List all templates (alphabetically sorted)
+	templates, err := reg.List()
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, t := range templates {
+		println(t.Name, t.Path, t.Description)
+	}
+
+	// Remove a template (safe to call multiple times)
+	err = reg.Remove("golang_service")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+#### Methods
+- `NewRegistry() (*Registry, error)` - Use default XDG location
+- `NewRegistryAt(path string) (*Registry, error)` - Custom registry location
+- `Register(name, templatePath, description string) error` - Register template
+- `List() ([]TemplateInfo, error)` - List all templates (sorted)
+- `Remove(name string) error` - Remove template (idempotent)
+
+#### Types
+```go
+type TemplateInfo struct {
+	Name        string    // Template name
+	Path        string    // Template path
+	Created     time.Time // Registration time
+	Description string    // Template description
+}
+```
+
+### Engine API
+
+Implement custom template engines or use the default Pongo2 engine.
+
+#### Using Default Engine
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"time"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+func main() {
+	engine := pkg.NewDefaultEngine()
+
+	// Render template string
+	output, err := engine.Render("Hello {{ name }}", 
+		map[string]interface{}{"name": "World"})
+	if err != nil {
+		log.Fatal(err)
+	}
+	println(output) // "Hello World"
+
+	// Render template file
+	output, err = engine.RenderFile("/path/to/template.txt",
+		map[string]interface{}{"project": "MyApp"})
+	if err != nil {
+		log.Fatal(err)
+	}
+	println(output)
+
+	// With context (cancellation/timeout)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	output, err = pkg.RenderWithEngine(ctx, engine, "template", nil)
+}
+```
+
+#### Engine Interface
+```go
+type Engine interface {
+	Render(template string, context map[string]interface{}) (string, error)
+	RenderFile(filePath string, context map[string]interface{}) (string, error)
+}
+
+func NewDefaultEngine() Engine
+func RenderWithEngine(ctx context.Context, engine Engine, 
+	template string, context map[string]interface{}) (string, error)
+```
+
+#### Implementing Custom Engine
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+	"github.com/madstone-tech/ason/pkg"
+	"context"
+)
+
+// MyCustomEngine implements pkg.Engine
+type MyCustomEngine struct{}
+
+func (e *MyCustomEngine) Render(template string, 
+	context map[string]interface{}) (string, error) {
+	// Your custom template rendering logic
+	// Must be thread-safe
+	return template, nil
+}
+
+func (e *MyCustomEngine) RenderFile(filePath string,
+	context map[string]interface{}) (string, error) {
+	// Your custom file rendering logic
+	// Must be thread-safe
+	return "", nil
+}
+
+// SimpleEngine example - basic variable replacement
+type SimpleEngine struct{}
+
+func (e *SimpleEngine) Render(template string, 
+	context map[string]interface{}) (string, error) {
+	result := template
+	for key, value := range context {
+		placeholder := "{{" + key + "}}"
+		result = strings.ReplaceAll(result, placeholder, 
+			fmt.Sprintf("%v", value))
+	}
+	return result, nil
+}
+
+func (e *SimpleEngine) RenderFile(filePath string,
+	context map[string]interface{}) (string, error) {
+	return "", nil
+}
+
+func main() {
+	engine := &MyCustomEngine{}
+	gen, _ := pkg.NewGenerator(engine)
+	gen.Generate(context.Background(), "./template", nil, "./output")
+}
+```
+
+## Template Syntax (Pongo2)
+
+Ason uses Pongo2, a Jinja2-like template engine.
+
+### Variables
+```
+Hello {{ name }}
+```
+
+### Filters
+```
+{{ name|upper }}
+{{ price|floatformat:2 }}
+{{ date|date:"Y-m-d" }}
+```
+
+### Loops
+```
+{% for item in items %}
+- {{ item }}
+{% endfor %}
+```
+
+### Conditionals
+```
+{% if user.is_admin %}
+Admin panel
+{% else %}
+User panel
+{% endif %}
+```
+
+### Template Inheritance
+```
+{% extends "base.html" %}
+{% block content %}
+...
+{% endblock %}
+```
+
+### Includes
+```
+{% include "header.html" %}
+```
+
+## Error Handling
+
+The library exports specific error types:
+
+```go
+package main
+
+import (
+	"errors"
+	"log"
+	"context"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+func main() {
+	gen, err := pkg.NewGenerator(nil)
+	if err != nil {
+		log.Printf("Error: %v", err)
+	}
+
+	// Error type checking with errors.Is
+	if errors.Is(err, context.Canceled) {
+		log.Println("Generation was cancelled")
+	}
+
+	if errors.Is(err, context.DeadlineExceeded) {
+		log.Println("Generation timeout")
+	}
+
+	// Error unwrapping with errors.Unwrap
+	unwrapped := errors.Unwrap(err)
+	log.Printf("Underlying error: %v", unwrapped)
+}
+```
+
+Error Types:
+- `context.Canceled` - Operation was cancelled
+- `context.DeadlineExceeded` - Context timeout
+- `*InvalidArgumentError` - Invalid input (nil engine, bad variable names)
+- `*InvalidPathError` - Path traversal or invalid path
+- `*VariableValidationError` - Bad variable names/values
+- `*GenerationError` - Template rendering failed
+- `*EngineError` - Engine-specific failure
+
+## Configuration
+
+### Registry Location
+- Default: `~/.local/share/ason/registry.toml`
+- Custom: `NewRegistryAt("/custom/path")`
+
+The registry stores:
+- Template names (must be valid Go identifiers)
+- Template paths (must exist on filesystem)
+- Creation timestamps
+- Descriptions
+
+### Template Names
+Must be valid Go identifiers:
+- Valid: `my_template`, `golang_service`, `asonApp`
+- Invalid: `my-template` (hyphens), `123app` (starts with number)
+
+## Thread Safety
+
+### Generator
+- Thread-safe with RWMutex protection
+- Multiple concurrent reads allowed
+- Safe for concurrent goroutines
+
+### Registry
+- Multiple concurrent reads allowed
+- Writes are serialized (mutex-protected)
+- Safe for concurrent goroutines
+
+### Engine
+- Must be thread-safe (implementation dependent)
+- Default Pongo2 engine is thread-safe
+- Custom engines must implement thread safety
+
+## Performance
+
+- Lightweight with minimal dependencies
+- Fast binary (~20MB)
+- Supports large projects
+- Efficient template rendering with Pongo2
+- Atomic file operations for reliability
+
+## Examples
+
+### Example 1: CLI - Generate from Template
+```bash
+# Create a template
+mkdir -p ~/templates/react-app
+echo '# {{ project_name }}' > ~/templates/react-app/README.md.tmpl
+echo 'Author: {{ author }}' >> ~/templates/react-app/README.md.tmpl
+
+# Register template
+ason register react_app ~/templates/react-app
+
+# Generate project
+ason new react_app my-app --var project_name=MyApp --var author=Alice
+
+# View generated file
+cat my-app/README.md
+```
+
+### Example 2: Library - Programmatic Generation
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+func main() {
+	engine := pkg.NewDefaultEngine()
+	gen, _ := pkg.NewGenerator(engine)
+
+	variables := map[string]interface{}{
+		"project_name": "MyApp",
+		"author":       "Alice",
+		"version":      "1.0.0",
+	}
+
+	ctx := context.Background()
+	err := gen.Generate(ctx, "./template", variables, "./output")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	println("Generated successfully")
+}
+```
+
+### Example 3: Registry Management
+```go
+package main
+
+import (
+	"log"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+func main() {
+	// Create registry at custom location
+	reg, _ := pkg.NewRegistryAt("/tmp/my-registry.toml")
+
+	// Register multiple templates
+	reg.Register("api_service", "/templates/api", "API service template")
+	reg.Register("web_app", "/templates/web", "Web app template")
+
+	// List templates
+	templates, _ := reg.List()
+	for _, t := range templates {
+		println(t.Name)
+	}
+}
+```
+
+## Testing
+
+### Run Official Tests
+```bash
+go test ./tests -v
+```
+
+### Run Demo Application
+```bash
+go run examples/test_library.go
+```
+
+### Run Race Detection
+```bash
+go test -race ./tests -v
+```
+
+## Documentation
+
+- CLI Help: `ason --help`
+- Testing Guide: `docs/TESTING_GUIDE.md`
+- Engine Interface: `docs/api/engine_interface.md`
+- Examples: `examples/test_library.go`
+- Changelog: `CHANGELOG.md`
+
+## Support
+
+### Registry Issues
+- Template names must be valid Go identifiers (no hyphens)
+- Paths must exist on filesystem
+- Default location: `~/.local/share/ason/registry.toml`
+
+### Generation Issues
+- Check template syntax with `ason validate <path>`
+- Ensure variables match template placeholders
+- Use `--dry-run` to preview without writing
+
+### Context/Timeout Issues
+- Use `context.WithTimeout()` for deadlines
+- Use `context.WithCancel()` for manual cancellation
+- Check `context.Canceled` and `context.DeadlineExceeded` errors
+
+## Architecture
+
+### CLI Tools
+- `ason new` - Generate projects
+- `ason register` - Register templates
+- `ason list` - List registered templates
+- `ason remove` - Remove templates
+- `ason validate` - Validate templates
+- `ason completion` - Shell autocompletion
+
+### Library Components
+- **Generator** (pkg/generator.go) - Project generation with context support
+- **Registry** (pkg/registry.go) - XDG-compliant template management
+- **Engine** (pkg/engine.go) - Pluggable template rendering interface
+- **Error Types** - Comprehensive error handling with Unwrap support
+- **Validation** - Input validation and security checks
+
+### Internal Packages
+- `internal/engine` - Pongo2 template engine implementation
+- `internal/registry` - Registry persistence layer
+- `internal/template` - Template configuration handling
+- `internal/validation` - Input validation utilities
+- `internal/security` - Path safety and traversal prevention
+- `internal/xdg` - XDG Base Directory Specification support
+
+## Requirements
+
+- Go 1.21+
+- Linux, macOS, or Windows
+- No external CLI dependencies
+
+## Compatibility
+
+- Backward compatible with v0.2.x CLI
+- Zero breaking changes in v0.3.0
+- CLI tools unchanged and fully functional
+- All existing templates continue to work
+
+## Version
+
+v0.3.0 - Library Export Release
+
+## License
+
+MIT
+
+## Links
+
+- Repository: https://github.com/madstone-tech/ason
+- Releases: https://github.com/madstone-tech/ason/releases
+- Issues: https://github.com/madstone-tech/ason/issues
+- Changelog: CHANGELOG.md

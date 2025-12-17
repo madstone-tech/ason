@@ -1,3 +1,4 @@
+// Package registry provides template registry management functionality.
 package registry
 
 import (
@@ -53,8 +54,8 @@ type TemplateVariable struct {
 	Example     string      `toml:"example,omitempty"`
 }
 
-// RegistryMetadata stores registry information
-type RegistryMetadata struct {
+// Metadata stores registry information
+type Metadata struct {
 	Templates map[string]TemplateEntry `json:"templates" toml:"templates"`
 	Updated   time.Time                `json:"updated" toml:"updated"`
 }
@@ -233,12 +234,12 @@ func (r *Registry) Remove(name string, backup bool, backupDir string) error {
 }
 
 // loadMetadata loads the registry metadata
-func (r *Registry) loadMetadata() (*RegistryMetadata, error) {
+func (r *Registry) loadMetadata() (*Metadata, error) {
 	metaPath := filepath.Join(r.path, "registry.toml")
 
 	// If metadata doesn't exist, return empty metadata
 	if _, err := os.Stat(metaPath); os.IsNotExist(err) {
-		return &RegistryMetadata{
+		return &Metadata{
 			Templates: make(map[string]TemplateEntry),
 			Updated:   time.Now(),
 		}, nil
@@ -249,7 +250,7 @@ func (r *Registry) loadMetadata() (*RegistryMetadata, error) {
 		return nil, fmt.Errorf("failed to read metadata file: %w", err)
 	}
 
-	var meta RegistryMetadata
+	var meta Metadata
 	if err := toml.Unmarshal(data, &meta); err != nil {
 		return nil, fmt.Errorf("failed to parse metadata file: %w", err)
 	}
@@ -262,7 +263,7 @@ func (r *Registry) loadMetadata() (*RegistryMetadata, error) {
 }
 
 // saveMetadata saves the registry metadata
-func (r *Registry) saveMetadata(meta *RegistryMetadata) error {
+func (r *Registry) saveMetadata(meta *Metadata) error {
 	metaPath := filepath.Join(r.path, "registry.toml")
 
 	data, err := toml.Marshal(meta)
@@ -302,6 +303,7 @@ func (r *Registry) copyTemplate(src, dst string) error {
 		if err != nil {
 			return err
 		}
+		_ = path // path is used indirectly below
 
 		// Calculate relative path
 		relPath, err := filepath.Rel(src, path)
@@ -330,13 +332,17 @@ func (r *Registry) copyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	defer srcFile.Close()
+	defer func() {
+		_ = srcFile.Close() //nolint:errcheck
+	}()
 
 	dstFile, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer dstFile.Close()
+	defer func() {
+		_ = dstFile.Close() //nolint:errcheck
+	}()
 
 	_, err = io.Copy(dstFile, srcFile)
 	return err
@@ -347,7 +353,7 @@ func (r *Registry) analyzeTemplate(templatePath string) (int64, int, error) {
 	var totalSize int64
 	var fileCount int
 
-	err := filepath.Walk(templatePath, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(templatePath, func(_ string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}

@@ -61,6 +61,168 @@ ason new my-template my-project
 ason new ./path/to/template my-project
 ```
 
+## Using Ason as a Library
+
+Ason provides a comprehensive public API for using it as a library in your Go projects.
+
+### Installation
+
+```bash
+go get github.com/madstone-tech/ason
+```
+
+### Core Features
+
+#### 1. **Generator** - Template Rendering
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+func main() {
+	// Create a generator with the default engine
+	engine := pkg.NewDefaultEngine()
+	gen, err := pkg.NewGenerator(engine)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Generate a project
+	variables := map[string]interface{}{
+		"project_name": "my-app",
+		"author":       "Alice",
+	}
+	
+	ctx := context.Background()
+	err = gen.Generate(ctx, "./template", variables, "./output")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+#### 2. **Registry** - Template Management
+```go
+package main
+
+import (
+	"log"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+func main() {
+	// Use default XDG-compliant registry
+	reg, err := pkg.NewRegistry()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Register a template
+	err = reg.Register("my-template", "/path/to/template", "My project template")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// List templates
+	templates, err := reg.List()
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	for _, t := range templates {
+		println(t.Name, t.Path)
+	}
+
+	// Remove a template
+	err = reg.Remove("my-template")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+#### 3. **Custom Engines** - Pluggable Template Engines
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"github.com/madstone-tech/ason/pkg"
+)
+
+type CustomEngine struct{}
+
+func (e *CustomEngine) Render(template string, ctx map[string]interface{}) (string, error) {
+	// Implement your template rendering logic
+	return template, nil
+}
+
+func (e *CustomEngine) RenderFile(filePath string, ctx map[string]interface{}) (string, error) {
+	// Implement file rendering
+	return "", nil
+}
+
+func main() {
+	// Use a custom engine
+	engine := &CustomEngine{}
+	gen, err := pkg.NewGenerator(engine)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	variables := map[string]interface{}{}
+	ctx := context.Background()
+	err = gen.Generate(ctx, "./template", variables, "./output")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+### Key Components
+
+- **Generator**: `NewGenerator(engine Engine)` - Create a generator with any engine
+  - `Generate()` - Render templates with context support
+  - `GetEngine()` - Retrieve the configured engine
+  
+- **Registry**: `NewRegistry()` / `NewRegistryAt(path)` - Manage templates
+  - `Register()`, `List()`, `Remove()` - Template CRUD operations
+  - XDG Base Directory compliant storage
+  
+- **Engine Interface**: Pluggable template engine system
+  - `NewDefaultEngine()` - Default Pongo2 implementation
+  - `RenderWithEngine()` - Context-aware rendering helper
+  - Implement `Engine` interface for custom engines
+
+### API Documentation
+
+For detailed API documentation, see:
+- [Engine Interface Documentation](docs/api/engine_interface.md)
+- [GoDoc](https://pkg.go.dev/github.com/madstone-tech/ason)
+
+### Thread Safety
+
+All public types are thread-safe:
+- **Generator**: RWMutex-protected for concurrent operations
+- **Registry**: Multiple concurrent reads, serialized writes
+- **Engine**: Implementation must be thread-safe
+
+### Error Handling
+
+Ason provides specific error types for proper error handling:
+- `TemplateNotFoundError` - Template doesn't exist
+- `InvalidPathError` - Invalid path (traversal prevention)
+- `VariableValidationError` - Invalid variable names/values
+- `GenerationError` - Template rendering failed
+- `EngineError` - Engine-specific failure
+
+All errors support `Unwrap()` for error chaining.
+
 ## Features
 
 - 🪇 **Rhythmic Generation**: Fast, lightweight operation with minimal dependencies

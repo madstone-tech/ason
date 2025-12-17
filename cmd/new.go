@@ -50,7 +50,7 @@ func init() {
 	newCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Show what would be generated")
 }
 
-func runNew(cmd *cobra.Command, args []string) error {
+func runNew(_ *cobra.Command, args []string) error {
 	templateName := args[0]
 
 	if len(args) > 1 {

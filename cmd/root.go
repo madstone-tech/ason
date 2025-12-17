@@ -4,19 +4,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	version = "0.1.0"
-	commit  = "none"
-	date    = "unknown"
-	builtBy = "source"
-)
+var version = "0.1.0"
 
 // SetVersionInfo sets the version information (called from main)
 func SetVersionInfo(v, c, d, b string) {
+	_ = c // commit info - may be used in future
+	_ = d // date info - may be used in future
+	_ = b // built by info - may be used in future
 	version = v
-	commit = c
-	date = d
-	builtBy = b
 	// Update rootCmd.Version directly to override the initialization value
 	rootCmd.Version = v
 }
@@ -36,6 +31,7 @@ into ready-to-use projects with rhythm and purpose.`,
 	Version: version,
 }
 
+// Execute runs the root command
 func Execute() error {
 	return rootCmd.Execute()
 }
