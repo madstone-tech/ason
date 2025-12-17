@@ -1,3 +1,4 @@
+// Package xdg provides XDG Base Directory specification utilities.
 package xdg
 
 import (

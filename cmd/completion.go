@@ -10,7 +10,7 @@ import (
 )
 
 // completeTemplateNames provides completion for template names from the registry
-func completeTemplateNames(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func completeTemplateNames(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	reg, err := registry.NewRegistry()
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveError
@@ -32,7 +32,7 @@ func completeTemplateNames(cmd *cobra.Command, args []string, toComplete string)
 }
 
 // completeTemplateNamesOrPaths provides completion for template names or local paths
-func completeTemplateNamesOrPaths(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func completeTemplateNamesOrPaths(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	var completions []string
 
 	// First, try to complete template names from registry
@@ -58,12 +58,12 @@ func completeTemplateNamesOrPaths(cmd *cobra.Command, args []string, toComplete 
 }
 
 // completeOutputPaths provides completion for output directory paths
-func completeOutputPaths(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func completeOutputPaths(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 	return nil, cobra.ShellCompDirectiveFilterDirs
 }
 
 // completeTemplatePaths provides completion for template file or directory paths
-func completeTemplatePaths(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func completeTemplatePaths(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	// Look for template files and directories
 	var completions []string
 
@@ -116,7 +116,7 @@ func isTemplateFile(filename string) bool {
 }
 
 // completeVariableKeys provides completion for variable keys
-func completeVariableKeys(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func completeVariableKeys(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	// Common variable names for completion
 	commonVars := []string{
 		"name=",
@@ -145,7 +145,7 @@ func completeVariableKeys(cmd *cobra.Command, args []string, toComplete string) 
 }
 
 // completeRegisterCommand provides completion for the register command
-func completeRegisterCommand(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func completeRegisterCommand(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 	// First argument is template name (no completion needed, it's user-defined)
 	if len(args) == 0 {
 		return nil, cobra.ShellCompDirectiveNoFileComp
@@ -174,9 +174,9 @@ func setupCompletions() {
 	validateCmd.ValidArgsFunction = completeTemplatePaths
 
 	// Add completion for flags
-	newCmd.RegisterFlagCompletionFunc("output", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	_ = newCmd.RegisterFlagCompletionFunc("output", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 		return nil, cobra.ShellCompDirectiveFilterDirs
 	})
 
-	newCmd.RegisterFlagCompletionFunc("var", completeVariableKeys)
+	_ = newCmd.RegisterFlagCompletionFunc("var", completeVariableKeys)
 }

@@ -6,9 +6,9 @@ import (
 
 var (
 	version = "0.1.0"
-	commit  = "none"
+	commit  = "none" //nolint:varnamelen
 	date    = "unknown"
-	builtBy = "source"
+	builtBy = "source" //nolint:varnamelen
 )
 
 // SetVersionInfo sets the version information (called from main)
@@ -36,6 +36,7 @@ into ready-to-use projects with rhythm and purpose.`,
 	Version: version,
 }
 
+// Execute runs the root command
 func Execute() error {
 	return rootCmd.Execute()
 }

@@ -1,3 +1,4 @@
+// Package cmd implements the Cobra CLI commands for Ason.
 package cmd
 
 import (
@@ -75,7 +76,7 @@ func init() {
 	validateCmd.Flags().BoolVar(&validateIgnoreWarnings, "ignore-warnings", false, "Show only errors")
 }
 
-func runList(cmd *cobra.Command, args []string) error {
+func runList(_ *cobra.Command, _ []string) error {
 	reg, err := registry.NewRegistry()
 	if err != nil {
 		return fmt.Errorf("failed to initialize registry: %w", err)
@@ -132,7 +133,7 @@ var registerCmd = &cobra.Command{
 	RunE:    runRegister,
 }
 
-func runRegister(cmd *cobra.Command, args []string) error {
+func runRegister(_ *cobra.Command, args []string) error {
 	name := args[0]
 	sourcePath := args[1]
 
@@ -213,7 +214,7 @@ var removeCmd = &cobra.Command{
 	RunE:    runRemove,
 }
 
-func runRemove(cmd *cobra.Command, args []string) error {
+func runRemove(_ *cobra.Command, args []string) error {
 	name := args[0]
 
 	fmt.Println("※ The ason prepares to release template from registry...")
@@ -263,7 +264,9 @@ func runRemove(cmd *cobra.Command, args []string) error {
 		fmt.Printf("🔮 Remove template '%s' from registry? [y/N]: ", name)
 
 		var response string
-		fmt.Scanln(&response)
+		if _, err := fmt.Scanln(&response); err != nil && err.Error() != "unexpected newline" {
+			// Ignore unexpected newline errors from Scanln - will continue with empty response
+		}
 		if !strings.EqualFold(response, "y") && !strings.EqualFold(response, "yes") {
 			fmt.Println("Operation cancelled.")
 			return nil
@@ -364,8 +367,12 @@ func printTemplatesTable(templates []registry.TemplateEntry) error {
 	fmt.Println()
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "NAME\tDESCRIPTION\tTYPE\tSIZE\tADDED")
-	fmt.Fprintln(w, "----\t-----------\t----\t----\t-----")
+	if _, err := fmt.Fprintln(w, "NAME\tDESCRIPTION\tTYPE\tSIZE\tADDED"); err != nil {
+		return fmt.Errorf("failed to write header: %w", err)
+	}
+	if _, err := fmt.Fprintln(w, "----\t-----------\t----\t----\t-----"); err != nil {
+		return fmt.Errorf("failed to write separator: %w", err)
+	}
 
 	for _, tmpl := range templates {
 		desc := tmpl.Description
@@ -381,15 +388,19 @@ func printTemplatesTable(templates []registry.TemplateEntry) error {
 			tmplType = "-"
 		}
 
-		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
+		if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n",
 			tmpl.Name,
 			desc,
 			tmplType,
 			formatSize(tmpl.Size),
-			formatTime(tmpl.Added))
+			formatTime(tmpl.Added)); err != nil {
+			return fmt.Errorf("failed to write row: %w", err)
+		}
 	}
 
-	w.Flush()
+	if err := w.Flush(); err != nil {
+		return fmt.Errorf("failed to flush output: %w", err)
+	}
 	fmt.Println()
 	fmt.Println("💡 Use 'ason new TEMPLATE OUTPUT_DIR' to create a project")
 	fmt.Println("💡 Use 'ason register' to prepare more templates for invocation")
@@ -448,7 +459,7 @@ func validateTemplate(templatePath string) error {
 
 	// Count files
 	fileCount := 0
-	err = filepath.Walk(templatePath, func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(templatePath, func(_ string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -565,15 +576,17 @@ func formatTime(t time.Time) string {
 
 	if diff < time.Minute {
 		return "just now"
-	} else if diff < time.Hour {
-		return fmt.Sprintf("%d min ago", int(diff.Minutes()))
-	} else if diff < 24*time.Hour {
-		return fmt.Sprintf("%d hr ago", int(diff.Hours()))
-	} else if diff < 7*24*time.Hour {
-		return fmt.Sprintf("%d days ago", int(diff.Hours()/24))
-	} else {
-		return t.Format("2006-01-02")
 	}
+	if diff < time.Hour {
+		return fmt.Sprintf("%d min ago", int(diff.Minutes()))
+	}
+	if diff < 24*time.Hour {
+		return fmt.Sprintf("%d hr ago", int(diff.Hours()))
+	}
+	if diff < 7*24*time.Hour {
+		return fmt.Sprintf("%d days ago", int(diff.Hours()/24))
+	}
+	return t.Format("2006-01-02")
 }
 
 func getBackupDir(customDir string) string {

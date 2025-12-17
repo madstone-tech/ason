@@ -1,3 +1,4 @@
+// Package template provides template configuration and parsing utilities.
 package template
 
 import (

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestExecute(t *testing.T) {
+func TestExecute(_ *testing.T) {
 	// Test that Execute function exists and can be called
 	err := Execute()
 	// Since Execute() uses rootCmd.Execute(), it might return errors

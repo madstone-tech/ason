@@ -189,13 +189,17 @@ func (g *Generator) copyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	defer srcFile.Close()
+	defer func() {
+		_ = srcFile.Close() //nolint:errcheck
+	}()
 
 	dstFile, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer dstFile.Close()
+	defer func() {
+		_ = dstFile.Close() //nolint:errcheck
+	}()
 
 	_, err = io.Copy(dstFile, srcFile)
 	return err

@@ -1,3 +1,4 @@
+// Package internal contains internal utility functions and types for Ason.
 package internal
 
 import "fmt"

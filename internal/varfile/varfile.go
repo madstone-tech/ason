@@ -1,3 +1,4 @@
+// Package varfile provides utilities for loading variables from files in TOML, YAML, and JSON formats.
 package varfile
 
 import (
