@@ -96,21 +96,22 @@ func runList(_ *cobra.Command, _ []string) error {
 	sortTemplates(templates, listSort, listReverse)
 
 	if len(templates) == 0 {
-		if listFormat == "json" {
+		switch listFormat {
+		case "json":
 			fmt.Println(`{"templates":[], "total":0}`)
 			return nil
-		} else if listFormat == "yaml" {
+		case "yaml":
 			fmt.Println("templates: []\ntotal: 0")
 			return nil
+		default:
+			fmt.Println("※ The registry echoes with silence...")
+			fmt.Println()
+			fmt.Println("No templates ready for invocation.")
+			fmt.Println()
+			fmt.Println("💡 Prepare templates for transformation:")
+			fmt.Println("   ason register my-template /path/to/template")
+			return nil
 		}
-
-		fmt.Println("※ The registry echoes with silence...")
-		fmt.Println()
-		fmt.Println("No templates ready for invocation.")
-		fmt.Println()
-		fmt.Println("💡 Prepare templates for transformation:")
-		fmt.Println("   ason register my-template /path/to/template")
-		return nil
 	}
 
 	switch listFormat {
@@ -264,9 +265,7 @@ func runRemove(_ *cobra.Command, args []string) error {
 		fmt.Printf("🔮 Remove template '%s' from registry? [y/N]: ", name)
 
 		var response string
-		if _, err := fmt.Scanln(&response); err != nil && err.Error() != "unexpected newline" {
-			// Ignore unexpected newline errors from Scanln - will continue with empty response
-		}
+		_, _ = fmt.Scanln(&response) // Ignore errors from Scanln - will continue with response or empty
 		if !strings.EqualFold(response, "y") && !strings.EqualFold(response, "yes") {
 			fmt.Println("Operation cancelled.")
 			return nil
@@ -301,7 +300,7 @@ var validateCmd = &cobra.Command{
 	RunE:  runValidate,
 }
 
-func runValidate(cmd *cobra.Command, args []string) error {
+func runValidate(_ *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		// Validate all templates in registry
 		return validateAllTemplates()

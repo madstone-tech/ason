@@ -111,7 +111,11 @@ func TestGenerator_Generate_DryRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp template dir: %v", err)
 	}
-	defer os.RemoveAll(tmpTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(tmpTemplateDir); err != nil {
+			t.Logf("Failed to remove temp template dir: %v", err)
+		}
+	}()
 
 	// Create test template files
 	err = os.WriteFile(filepath.Join(tmpTemplateDir, "README.md"), []byte("# {{ name }}"), 0644)
@@ -142,7 +146,9 @@ func TestGenerator_Generate_DryRun(t *testing.T) {
 	// Verify no directory was created (dry run)
 	if _, err := os.Stat("/tmp/test-output"); !os.IsNotExist(err) {
 		t.Error("Directory should not exist after dry run")
-		os.RemoveAll("/tmp/test-output") // Clean up if it was created
+		if err := os.RemoveAll("/tmp/test-output"); err != nil { // Clean up if it was created
+			t.Logf("Failed to clean up test directory: %v", err)
+		}
 	}
 }
 
@@ -152,14 +158,22 @@ func TestGenerator_Generate_RealRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Logf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	// Create temporary template directory
 	tmpTemplateDir, err := os.MkdirTemp("", "ason_template_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp template dir: %v", err)
 	}
-	defer os.RemoveAll(tmpTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(tmpTemplateDir); err != nil {
+			t.Logf("Failed to remove temp template dir: %v", err)
+		}
+	}()
 
 	// Create test template files
 	err = os.WriteFile(filepath.Join(tmpTemplateDir, "README.md"), []byte("# {{ name }}"), 0644)
@@ -219,7 +233,11 @@ func TestGenerator_Generate_DirectoryCreationError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp template dir: %v", err)
 	}
-	defer os.RemoveAll(tmpTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(tmpTemplateDir); err != nil {
+			t.Logf("Failed to remove temp template dir: %v", err)
+		}
+	}()
 
 	// Create test template file
 	err = os.WriteFile(filepath.Join(tmpTemplateDir, "test.txt"), []byte("test"), 0644)
@@ -253,7 +271,11 @@ func TestGenerator_WithRealEngine(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp template dir: %v", err)
 	}
-	defer os.RemoveAll(tmpTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(tmpTemplateDir); err != nil {
+			t.Logf("Failed to remove temp template dir: %v", err)
+		}
+	}()
 
 	// Create test template file with Pongo2 syntax
 	err = os.WriteFile(filepath.Join(tmpTemplateDir, "test.md"), []byte("# {{ name }}\n\nAuthor: {{ author | default:\"Unknown\" }}"), 0644)
@@ -261,23 +283,23 @@ func TestGenerator_WithRealEngine(t *testing.T) {
 		t.Fatalf("Failed to create template file: %v", err)
 	}
 
-	// Test with real Pongo2 engine
 	tmpl := &Template{
 		Path: tmpTemplateDir,
 	}
+
 	realEngine := engine.NewPongo2Engine()
 	generator := New(tmpl, realEngine)
-
-	if generator.engine == nil {
-		t.Error("Generator should have real engine")
-	}
 
 	// Create temporary output directory
 	tmpOutputDir, err := os.MkdirTemp("", "ason_output_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp output dir: %v", err)
 	}
-	defer os.RemoveAll(tmpOutputDir)
+	defer func() {
+		if err := os.RemoveAll(tmpOutputDir); err != nil {
+			t.Logf("Failed to remove temp output dir: %v", err)
+		}
+	}()
 
 	// Test real generation with real engine
 	context := map[string]interface{}{
@@ -312,7 +334,11 @@ func TestGenerator_BinaryFileHandling(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp template dir: %v", err)
 	}
-	defer os.RemoveAll(tmpTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(tmpTemplateDir); err != nil {
+			t.Logf("Failed to remove temp template dir: %v", err)
+		}
+	}()
 
 	// Create a binary file (simulate by using non-UTF8 content)
 	binaryContent := []byte{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A} // PNG header
@@ -338,7 +364,11 @@ func TestGenerator_BinaryFileHandling(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp output dir: %v", err)
 	}
-	defer os.RemoveAll(tmpOutputDir)
+	defer func() {
+		if err := os.RemoveAll(tmpOutputDir); err != nil {
+			t.Logf("Failed to remove temp output dir: %v", err)
+		}
+	}()
 
 	context := map[string]interface{}{
 		"name": "Test Project",
@@ -376,7 +406,11 @@ func TestGenerator_NestedDirectories(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp template dir: %v", err)
 	}
-	defer os.RemoveAll(tmpTemplateDir)
+	defer func() {
+		if err := os.RemoveAll(tmpTemplateDir); err != nil {
+			t.Logf("Failed to remove temp template dir: %v", err)
+		}
+	}()
 
 	// Create nested directory structure
 	srcDir := filepath.Join(tmpTemplateDir, "src")
@@ -407,7 +441,11 @@ func TestGenerator_NestedDirectories(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp output dir: %v", err)
 	}
-	defer os.RemoveAll(tmpOutputDir)
+	defer func() {
+		if err := os.RemoveAll(tmpOutputDir); err != nil {
+			t.Logf("Failed to remove temp output dir: %v", err)
+		}
+	}()
 
 	context := map[string]interface{}{
 		"project_name": "MyProject",

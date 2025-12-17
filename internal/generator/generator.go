@@ -1,3 +1,4 @@
+// Package generator provides template generation and rendering functionality.
 package generator
 
 import (

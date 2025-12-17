@@ -1,3 +1,4 @@
+// Package main is the entry point for the Ason CLI tool.
 package main
 
 import (

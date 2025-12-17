@@ -1,3 +1,4 @@
+// Package registry provides template registry management functionality.
 package registry
 
 import (

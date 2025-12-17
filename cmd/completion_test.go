@@ -22,9 +22,15 @@ func TestCompleteTemplateNames(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	// Test with empty registry (should return no completions)
 	completions, directive := completeTemplateNames(nil, []string{}, "test")

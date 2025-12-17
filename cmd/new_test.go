@@ -59,23 +59,37 @@ func TestNewCmdFlags(t *testing.T) {
 func TestNewCmdDryRun(t *testing.T) {
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	defer func() {
+		if err := os.Setenv("HOME", originalHome); err != nil {
+			t.Logf("Failed to restore HOME: %v", err)
+		}
+	}()
 
 	// Create temporary home directory
 	tmpHome, err := os.MkdirTemp("", "ason_new_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	// Create temporary template directory
 	tmpTemplate, err := os.MkdirTemp("", "ason_template_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp template: %v", err)
 	}
-	defer os.RemoveAll(tmpTemplate)
+	defer func() {
+		if err := os.RemoveAll(tmpTemplate); err != nil {
+			t.Logf("Failed to remove temp template: %v", err)
+		}
+	}()
 
 	// Add a test file to the template
 	err = os.WriteFile(filepath.Join(tmpTemplate, "README.md"), []byte("# {{ name }}"), 0644)
@@ -105,16 +119,26 @@ func TestNewCmdDryRun(t *testing.T) {
 func TestNewCmdWithExistingTemplate(t *testing.T) {
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	defer func() {
+		if err := os.Setenv("HOME", originalHome); err != nil {
+			t.Logf("Failed to restore HOME: %v", err)
+		}
+	}()
 
 	// Create temporary home directory
 	tmpHome, err := os.MkdirTemp("", "ason_new_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	// Create template directory structure (XDG compliant)
 	registryDir := filepath.Join(tmpHome, ".local", "share", "ason", "templates")
@@ -157,7 +181,11 @@ variables = []
 	if err != nil {
 		t.Fatalf("Failed to create output dir: %v", err)
 	}
-	defer os.RemoveAll(outputDir)
+	defer func() {
+		if err := os.RemoveAll(outputDir); err != nil {
+			t.Logf("Failed to remove output dir: %v", err)
+		}
+	}()
 
 	// Capture output
 	var buf bytes.Buffer
@@ -177,23 +205,37 @@ variables = []
 func TestNewCmdWithDirectPath(t *testing.T) {
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	defer func() {
+		if err := os.Setenv("HOME", originalHome); err != nil {
+			t.Logf("Failed to restore HOME: %v", err)
+		}
+	}()
 
 	// Create temporary home directory
 	tmpHome, err := os.MkdirTemp("", "ason_new_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	// Create template directory
 	templateDir, err := os.MkdirTemp("", "ason_template_test")
 	if err != nil {
 		t.Fatalf("Failed to create template dir: %v", err)
 	}
-	defer os.RemoveAll(templateDir)
+	defer func() {
+		if err := os.RemoveAll(templateDir); err != nil {
+			t.Logf("Failed to remove template dir: %v", err)
+		}
+	}()
 
 	// Add a test file to the template
 	err = os.WriteFile(filepath.Join(templateDir, "README.md"), []byte("# {{ name }}"), 0644)
@@ -206,7 +248,11 @@ func TestNewCmdWithDirectPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create output dir: %v", err)
 	}
-	defer os.RemoveAll(outputDir)
+	defer func() {
+		if err := os.RemoveAll(outputDir); err != nil {
+			t.Logf("Failed to remove output dir: %v", err)
+		}
+	}()
 
 	// Capture output
 	var buf bytes.Buffer
@@ -226,16 +272,26 @@ func TestNewCmdWithDirectPath(t *testing.T) {
 func TestNewCmdWithNonExistentTemplate(t *testing.T) {
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	defer func() {
+		if err := os.Setenv("HOME", originalHome); err != nil {
+			t.Logf("Failed to restore HOME: %v", err)
+		}
+	}()
 
 	// Create temporary home directory
 	tmpHome, err := os.MkdirTemp("", "ason_new_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	// Capture output
 	var buf bytes.Buffer
@@ -277,35 +333,40 @@ func TestNewCmdVariables(t *testing.T) {
 }
 
 func TestNewCmdWithExtraVars(t *testing.T) {
-	// Save original values
-	originalExtraVars := extraVars
-	defer func() { extraVars = originalExtraVars }()
-
-	// Set extra vars
-	extraVars = map[string]string{
-		"name":    "test-project",
-		"version": "1.0.0",
-	}
 
 	// Save original home directory
 	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	defer func() {
+		if err := os.Setenv("HOME", originalHome); err != nil {
+			t.Logf("Failed to restore HOME: %v", err)
+		}
+	}()
 
 	// Create temporary home directory
 	tmpHome, err := os.MkdirTemp("", "ason_new_test")
 	if err != nil {
 		t.Fatalf("Failed to create temp home: %v", err)
 	}
-	defer os.RemoveAll(tmpHome)
+	defer func() {
+		if err := os.RemoveAll(tmpHome); err != nil {
+			t.Logf("Failed to remove temp home: %v", err)
+		}
+	}()
 
-	os.Setenv("HOME", tmpHome)
+	if err := os.Setenv("HOME", tmpHome); err != nil {
+		t.Fatalf("Failed to set HOME: %v", err)
+	}
 
 	// Create template directory
 	templateDir, err := os.MkdirTemp("", "ason_template_test")
 	if err != nil {
 		t.Fatalf("Failed to create template dir: %v", err)
 	}
-	defer os.RemoveAll(templateDir)
+	defer func() {
+		if err := os.RemoveAll(templateDir); err != nil {
+			t.Logf("Failed to remove template dir: %v", err)
+		}
+	}()
 
 	// Set dry run to avoid actual generation
 	dryRun = true
