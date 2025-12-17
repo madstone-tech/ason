@@ -242,7 +242,7 @@ func TestRegistryConcurrentReads(t *testing.T) {
 	_ = registry.Register("test", templateDir, "Test")
 
 	// Run concurrent reads
-	results := RunConcurrent(t, 5, func(index int) error {
+	results := RunConcurrent(t, 5, func(_ int) error {
 		templates, err := registry.List()
 		if err != nil {
 			return err

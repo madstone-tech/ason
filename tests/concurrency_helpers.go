@@ -1,3 +1,4 @@
+// Package tests provides test utilities and fixtures for Ason.
 package tests
 
 import (
@@ -99,10 +100,9 @@ func AssertNoRaceCondition(t testing.TB, results []ConcurrencyResult) {
 	// Check for overlapping execution (which might indicate issues)
 	// This is a simple heuristic - actual race detection requires more sophisticated methods
 	for i := 0; i < len(results)-1; i++ {
-		if results[i].EndTime.After(results[i+1].StartTime) {
-			// Operations overlap - this is expected for concurrent reads
-			// but might indicate issues for exclusive operations
-		}
+		_ = results[i].EndTime.After(results[i+1].StartTime)
+		// Operations overlap - this is expected for concurrent reads
+		// but might indicate issues for exclusive operations
 	}
 }
 
@@ -136,7 +136,7 @@ func MeasureConcurrencyThroughput(results []ConcurrencyResult) float64 {
 // ConcurrentCounter is a thread-safe counter for concurrent operations.
 type ConcurrentCounter struct {
 	value int64
-	mu    sync.RWMutex
+	_     sync.RWMutex // nolint:unused
 }
 
 // NewConcurrentCounter creates a new counter.

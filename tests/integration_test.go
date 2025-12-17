@@ -173,6 +173,6 @@ func TestEngineInterfaceCompliance(t *testing.T) {
 
 // TestDefaultEngineInterfaceCompliance tests that default engine implements Engine interface.
 func TestDefaultEngineInterfaceCompliance(t *testing.T) {
-	var engine pkg.Engine = pkg.NewDefaultEngine()
+	engine := pkg.NewDefaultEngine()
 	assert.NotNil(t, engine)
 }
